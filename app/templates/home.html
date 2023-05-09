@@ -1,0 +1,295 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="m-2">
+  <div class="container row">
+    <div class="col">
+      <!-- filter modal button -->
+      <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#filterDataModal">
+        Filter
+      </button>
+
+      <!-- filter Modal -->
+      <div class="modal fade" id="filterDataModal" tabindex="-1" aria-labelledby="filterDataModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <form method="POST">
+            {{ filter_form.csrf_token }}
+            {{ filter_form.hidden_tag() }}
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="filterDataModalLabel">Filter</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                
+                <div class="mb-3">
+                  <label for="addDept" class="form-label">Select Department</label>
+                  {{ filter_form.filterData(class="form-select form-select-lg mb-3") }}
+                </div>
+              </div>
+              <div class="modal-footer">
+                {{ filter_form.input_filter_submit(class="btn btn-danger") }}
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- add record trigger modal -->
+      <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#addRecModal">
+        Add Record 
+      </button>
+
+      <!-- add record Modal -->
+      <div class="modal fade" id="addRecModal" tabindex="-1" aria-labelledby="addRecModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="addRecModalLabel">Add Record</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST">
+              {{ input_data_form.csrf_token }}
+              {{ input_data_form.hidden_tag() }}
+              <div class="modal-body">
+                <div class="container">
+                  {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                      {% for category, message in messages %}
+                        <div class = "m-2 alert alert-{{ category }} w-100">
+                          {{ message }}
+                        </div>
+                      {% endfor %}
+                    {% endif %}
+                  {% endwith %}
+                  <div class="mb-3">
+
+                    <!-- <input type="text" class="form-control" id="addDept" aria-describedby="departmentname"> -->
+                    <label for="addDept" class="form-label">Department</label>
+                    {% if input_data_form.deptname.errors %}
+                    {{ input_data_form.deptname(class = "form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                      {% for errors in input_data_form.deptname.errors %}
+                      <span>{{ errors }}</span>
+                      {% endfor %}
+                    </div>
+                    {% else %}
+                      {{ input_data_form.deptname(class="form-control", placeholder="Department", id="addDept") }}
+                    {% endif %}
+                  </div>
+                  <div class="mb-3">
+                    <label for="roomName" class="form-label">Room Name</label>
+                    {% if input_data_form.roomname.errors %}
+                    {{ input_data_form.roomname(class = "form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                      {% for errors in input_data_form.roomname.errors %}
+                      <span>{{ errors }}</span>
+                      {% endfor %}
+                    </div>
+                    {% else %}
+                      {{ input_data_form.roomname(class="form-control", placeholder="Room", id="roomName") }}
+                    {% endif %}
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label" for="itemm">Item</label>
+                    {% if input_data_form.item.errors %}
+                    {{ input_data_form.item(class = "form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                      {% for errors in input_data_form.item.errors %}
+                      <span>{{ errors }}</span>
+                      {% endfor %}
+                    </div>
+                    {% else %}
+                      {{ input_data_form.item(class="form-control", placeholder="Item", id="itemm") }}
+                    {% endif %}
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label" for="brandnameitemm">Brand Name Item</label>
+                    {% if input_data_form.brandnameitem.errors %}
+                    {{ input_data_form.brandnameitem(class = "form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                      {% for errors in input_data_form.brandnameitem.errors %}
+                      <span>{{ errors }}</span>
+                      {% endfor %}
+                    </div>
+                    {% else %}
+                      {{ input_data_form.brandnameitem(class="form-control", placeholder="Brand Name Item", id="brandnameitemm") }}
+                    {% endif %}
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label" for="loadnumss"># of Load</label>
+                    {% if input_data_form.loadnums.errors %}
+                    {{ input_data_form.loadnums(class = "form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                      {% for errors in input_data_form.loadnums.errors %}
+                      <span>{{ errors }}</span>
+                      {% endfor %}
+                    </div>
+                    {% else %}
+                      {{ input_data_form.loadnums(class="form-control", placeholder="# of Load", id="loadnumss") }}
+                    {% endif %}
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label" for="ratingsevv">Ratings E(V)</label>
+                    {% if input_data_form.ratingsev.errors %}
+                    {{ input_data_form.ratingsev(class = "form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                      {% for errors in input_data_form.ratingsev.errors %}
+                      <span>{{ errors }}</span>
+                      {% endfor %}
+                    </div>
+                    {% else %}
+                      {{ input_data_form.ratingsev(class="form-control", placeholder="Ratings E(V)", id="ratingsevv") }}
+                    {% endif %}
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label" for="ratingsiaa">Ratings I(A)</label>
+                    {% if input_data_form.ratingsia.errors %}
+                    {{ input_data_form.ratingsia(class = "form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                      {% for errors in input_data_form.ratingsia.errors %}
+                      <span>{{ errors }}</span>
+                      {% endfor %}
+                    </div>
+                    {% else %}
+                      {{ input_data_form.ratingsia(class="form-control", placeholder="Ratings I(A)", id="ratingsiaa") }}
+                    {% endif %}
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label" for="ratingspww">Ratings P(W)</label>
+                    {% if input_data_form.ratingspw.errors %}
+                    {{ input_data_form.ratingspw(class = "form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                      {% for errors in input_data_form.ratingspw.errors %}
+                      <span>{{ errors }}</span>
+                      {% endfor %}
+                    </div>
+                    {% else %}
+                      {{ input_data_form.ratingspw(class="form-control", placeholder="Ratings P(W)", id="ratingspww") }}
+                    {% endif %}
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label" for="actualpww">Actual P(W)</label>
+                    {% if input_data_form.actualpw.errors %}
+                    {{ input_data_form.actualpw(class = "form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                      {% for errors in input_data_form.actualpw.errors %}
+                      <span>{{ errors }}</span>
+                      {% endfor %}
+                    </div>
+                    {% else %}
+                      {{ input_data_form.actualpw(class="form-control", placeholder="Actual P(W)", id="actualpww") }}
+                    {% endif %}
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label" for="usagefactorr">Usage Factor</label>
+                    {% if input_data_form.usagefactor.errors %}
+                    {{ input_data_form.usagefactor(class = "form-control is-invalid") }}
+                    <div class="invalid-feedback">
+                      {% for errors in input_data_form.usagefactor.errors %}
+                      <span>{{ errors }}</span>
+                      {% endfor %}
+                    </div>
+                    {% else %}
+                      {{ input_data_form.usagefactor(class="form-control", placeholder="Usage Factor", id="usagefactorr") }}
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                {{ input_data_form.input_data_submit(class="btn btn-danger") }}
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+<div class="container text-center">
+  <div class="pt-4 row row-cols-2">
+    <div class="col">
+      <div class="card border-danger text-bg-light w-100" style="width: 18rem;">
+        <div class="card-header">Total Wattage</div>
+        <div class="card-body">
+          <h5 class="card-title"></h5>
+          <h4 class="card-text">{{ 942 }} KW</h4>
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <h2>Load Selected Department</h2>
+      <canvas id="myChart"></canvas>
+    </div>
+
+
+    <div class="pt-2 col">
+      <div class="card border-danger text-bg-light w-100" style="width: 18rem;">
+        <div class="card-header">Total Generated</div>
+        <div class="card-body">
+          <p class="card-title">Solar PV</p>
+          <h4 class="card-text">{{ 586 }} KW</h4>
+        </div>
+      </div>
+
+    </div>
+    <div class="col">
+      <h2>Load for every Department</h2>
+      <canvas id="lmsPieChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+  const ctx = document.getElementById('myChart');
+  const pieCtx = document.getElementById('lmsPieChart')
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+      datasets: [{
+        label: '# of Load per Room  ',
+        data: [12, 19, 3, 5, 2, 3],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+  
+  new Chart(pieCtx, {
+    type: 'doughnut',
+    data: {
+  labels: [
+    'Red',
+    'Blue',
+    'Yellow'
+  ],
+  datasets: [{
+    label: 'My First Dataset',
+    data: [300, 50, 100],
+    backgroundColor: [
+      'rgb(255, 99, 132)',
+      'rgb(54, 162, 235)',
+      'rgb(255, 205, 86)'
+    ],
+    hoverOffset: 4
+  }]
+},
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+</script>
+
+{% endblock content %}

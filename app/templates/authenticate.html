@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COE Load Web Applicaton</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/loginstyle.css') }}" />
+</head>
+<body>
+    <header class="header">
+        <nav class="navbar">
+    
+        </nav>
+    </header>
+    <div class="background"></div>
+    <div class="container">
+        <div class="content">
+            <h2 class="logo" ><i><img src="../static/assets/log.png" alt="Logo"></i></h2>
+            <div class="text-sci">
+                <h2>COE Load Web App System<br><span>Welcome To the Website
+                </span></h2>
+                <p>A Web Monitoring System for the College of Engineering (COE)
+                </p>
+            </div>
+        </div>
+
+        <div class="logreg-box">
+            <div class="form-box login">
+                <form method="POST">
+                  <h2>Sign In</h2>
+                  {{ loginForm.csrf_token }}
+                  {{ loginForm.hidden_tag() }}
+                  {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                      {% for category, message in messages %}
+                        <div class = "m-2 alert alert-{{ category }} w-100">
+                          {{ message }}
+                        </div>
+                      {% endfor %}
+                    {% endif %}
+                  {% endwith %}
+
+                 <div class="input-box">
+                  <span class="icon"><i class='bx bxs-envelope'></i></span>
+                  {% if loginForm.login_username.errors %}
+                    {{ loginForm.login_username(class = "is-invalid") }}
+                    <div class="invalid-feedback">
+                        {% for errors in loginForm.username.errors %}
+                            <span>{{ errors }}</span>
+                        {% endfor %}
+                    </div>
+                  {% else %}
+                    {{ loginForm.login_username() }}
+                  {% endif %}
+                  <label>Username</label>
+                </div>
+
+                  <div class="input-box">
+                    <span class="icon"><i class='bx bxs-lock-alt'></i></span>
+                    {% if loginForm.login_password.errors %}
+                      {{ loginForm.login_password(class = "form-control is-invalid") }}
+                      <div class="invalid-feedback">
+                          {% for errors in loginForm.login_password.errors %}
+                              <span>{{ errors }}</span>
+                          {% endfor %}
+                      </div>
+                    {% else %}
+                      {{ loginForm.login_password() }}
+                    {% endif %}
+                    <label >Password</label>
+                  </div>
+                  
+                  {{ loginForm.login_submit(class="btn") }}
+
+                  <div class="login-register">
+                    <p>Don't Have an Account?<a href="#" class="register-link">
+                    Sign up</a></p>
+                  </div>
+                </form>
+            </div>
+
+            <div class="form-box register">
+                <form method="POST">
+                    <h2>Sign Up</h2>
+                    {{ signupForm.csrf_token }}
+                    {{ signupForm.hidden_tag() }}
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                      {% if messages %}
+                        {% for category, message in messages %}
+                          <div class = "m-2 alert alert-{{ category }} w-100">
+                            {{ message }}
+                          </div>
+                        {% endfor %}
+                      {% endif %}
+                    {% endwith %}
+        
+                 <div class="input-box">
+                    <span class="icon"><i class='bx bxs-user'></i></span>
+                    {% if signupForm.username.errors %}
+                      {{ signupForm.username(class="form-control is-invalid") }}
+                      <div class="invalid-feedback">
+                          {% for errors in signupForm.username.errors %}
+                              <span>{{ errors }}</span>
+                          {% endfor %}
+                      </div>
+                    {% else %}
+                      {{ signupForm.username() }}
+                    {% endif %}
+                    <label >Name</label>
+                </div>
+    
+                  <div class="input-box">
+                    <span class="icon"><i class='bx bxs-lock-alt'></i></span>
+                    {% if signupForm.password.errors %}
+                      {{ signupForm.password(class = "form-control is-invalid") }}
+                      <div class="invalid-feedback">
+                          {% for errors in signupForm.password.errors %}
+                              <span>{{ errors }}</span>
+                          {% endfor %}
+                      </div>
+                    {% else %}
+                      {{ signupForm.password() }}
+                    {% endif %}
+                    <label >Password</label>
+                  </div>
+                 
+                  {{ signupForm.signup_submit(class="btn") }}
+    
+                  <div class="login-register">
+                    <p>Already Have an Account?<a href="#" class="login-link">
+                    Sign In</a></p>
+                  </div>
+    
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/loginscript.js') }}"></script>
+</body>
+</html>
