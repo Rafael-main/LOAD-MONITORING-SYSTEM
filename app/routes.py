@@ -2,7 +2,7 @@ from app.controller import UserController
 from app.models import User
 from flask import render_template, redirect, request, session, url_for, flash, jsonify
 from app import app
-from app.controller import UserController
+from app.controller import UserController, MonitorLoad
 
 from app.forms import LoginForm, SignUpForm, InputDataForm, FilterForm
 import uuid
@@ -18,6 +18,8 @@ def land():
 def authenticate():
     login_form = LoginForm()
     signup_form = SignUpForm()
+    inputDataForm = InputDataForm()
+    filterForm = FilterForm()
 
     if signup_form.validate_on_submit():
 
@@ -48,22 +50,13 @@ def authenticate():
         session.permanent = True
         logUserIn = UserController(username = login_form.login_username.data, password=login_form.login_password.data)
         attemptCurrUser = logUserIn.loginUser()
-        print(attemptCurrUser)
-        if attemptCurrUser == 'wrong_pass' or attemptCurrUser == 'non-exist':
+        if attemptCurrUser == 'wrong_pass' or attemptCurrUser == 'non_exist':
             flash('Wrong Username or Password! Try Again.', 'danger')
 
         else:
-            # now = datetime.now()
-            # jsonifiedUser = {
-            #     'uuid': str(attemptCurrUser.uuid),
-            #     'username': attemptCurrUser.name,
-            #     'timein': now.strftime("%H:%M:%S"),
-            #     'datein': now.strftime("%d/%m/%Y"),
-            #     'permitStats': 'Allow'
-            # }
             session['user'] = 'presentUser'
-            return redirect(url_for('home'))
-            # return render_template('home.html', userData = session['user'])
+            # return redirect(url_for('home'))
+            return render_template('home.html', userData = session['user'], input_data_form = inputDataForm, filter_form = filterForm)
 
     
     return render_template('authenticate.html', loginForm = login_form, signupForm = signup_form)
@@ -85,9 +78,26 @@ def home():
             deptUUID= f'dept-{str(uuid.uuid4())[:5]}'
             roomUUID= f'room-{str(uuid.uuid4())[:5]}'
             loadUUID= f'load-{str(uuid.uuid4())[:5]}'
-            # add dept
-            # add room
-            # add load
+
+            # instantiate monitor load
+            monitorLoad = MonitorLoad(
+                loadUUID=loadUUID,
+                roomUUID=roomUUID,
+                deptUUID=deptUUID,
+                department= inputDataForm.deptname.data,
+                room=inputDataForm.roomname.data, 
+                item=inputDataForm.item.data, 
+                brandNameItem=inputDataForm.brandnameitem.data, 
+                loadNums=inputDataForm.loadnums.data, 
+                ratingsEV=inputDataForm.ratingsev.data, 
+                ratingsIA=inputDataForm.ratingsia.data, 
+                ratingsPW=inputDataForm.ratingspw.data, 
+                actualPW=inputDataForm.actualpw.data, 
+                usageFactor=inputDataForm.usagefactor.data,
+            )
+            # add records
+            monitorLoad.loadInfoInput()
+
             return render_template('home.html', userData = session['user'], input_data_form = inputDataForm, filter_form = filterForm)
             
         elif filterForm.validate_on_submit():
@@ -99,3 +109,156 @@ def home():
 
     # return render_template('home.html')
 
+
+@app.route('/addrecordfor', methods=['POST'])
+def addrecordfor():
+    if 'user' in session:
+        deptUUID= f'dept-{str(uuid.uuid4())[:5]}'
+        roomUUID= f'room-{str(uuid.uuid4())[:5]}'
+        loadUUID= f'load-{str(uuid.uuid4())[:5]}'
+
+        # data from ajax
+        department = request.form.get('department')
+        room = request.form.get('room')
+        item = request.form.get('item')
+        brandnameitem = request.form.get('brandNameItem')
+        loadNums = request.form.get('loadNums')
+        ratingsEV = request.form.get('ratingsEV')
+        ratingsIA = request.form.get('ratingsIA')
+        ratingsPW = request.form.get('ratingsPW')
+        actualPW = request.form.get('actualPW')
+        usageFactor = request.form.get('usageFactor')
+
+        # monitor load controller
+        monitorLoad = MonitorLoad(
+            loadUUID=loadUUID,
+            roomUUID=roomUUID,
+            deptUUID=deptUUID,
+            department= department,
+            room=room, 
+            item=item, 
+            brandNameItem=brandnameitem, 
+            loadNums=loadNums, 
+            ratingsEV=ratingsEV, 
+            ratingsIA=ratingsIA, 
+            ratingsPW=ratingsPW, 
+            actualPW=actualPW, 
+            usageFactor=usageFactor,
+        )
+            # add records
+        monitorLoad.loadInfoInput()
+       
+        return jsonify({'status': 'ok', 'data': {'dept_load':department}})
+       
+    else:
+        # return jsonify({'status': 'not_ok'})
+        return redirect(url_for('authenticate'))
+
+@app.route('/deptdata')
+def deptdata():
+    # pie chart
+    if 'user' in session:
+        # monitor load controller
+        monitorLoad = MonitorLoad()
+
+        # get total wattage
+        deptload = monitorLoad.departmentLoad()
+       
+        return jsonify({'status': 'ok', 'data': {'dept_load':deptload}})
+       
+    else:
+        # return jsonify({'status': 'not_ok'})
+        return redirect(url_for('authenticate'))
+
+
+
+@app.route('/roomdata', methods=['GET','POST'])
+def roomdata():
+    # bar chart
+    if 'user' in session:
+        monitorLoad = MonitorLoad()
+        if request.method == 'POST':
+
+            curr_dept = request.get_json()['currdept']
+            roomloadperdept = monitorLoad.roomLoadPerDept(currDept=curr_dept)
+        roomloadperdept = monitorLoad.roomLoadPerDept()
+        
+       
+        return jsonify({'status': 'ok', 'data': {'room_load_per_dept':roomloadperdept}})
+    else:
+        # return jsonify({'status': 'not_ok'})
+        return redirect(url_for('authenticate'))
+
+
+@app.route('/totalColWattage')
+def totalColWattage():
+    if 'user' in session:
+       # monitor load controller
+        monitorLoad = MonitorLoad()
+
+        # get total wattage
+        totalwattage = monitorLoad.totalWattage()
+
+        return jsonify({'status': 'ok', 'data': {'total_wattage':totalwattage}})
+    else:
+        # return jsonify({'status': 'not_ok'})
+        return redirect(url_for('authenticate'))
+
+
+@app.route('/totalColSolarGenerate')
+def totalColSolarGenerate():
+    if 'user' in session:
+        # monitor load controller
+        monitorLoad = MonitorLoad()
+
+        # get total solar rating
+        totalSolarRating = monitorLoad.totalSolarGenerate()
+       
+        return jsonify({'status': 'ok', 'data': {'solar_rating': totalSolarRating}})
+    else:
+        # return jsonify({'status': 'not_ok'})
+        return redirect(url_for('authenticate'))
+
+@app.route('/databasetable')
+def databasetable():
+    if 'user' in session:
+        # monitor load controller
+        monitorLoad = MonitorLoad()
+
+        # get total solar rating
+        databaseTable = monitorLoad.databaseTable()
+       
+        return jsonify({'status': 'ok', 'data': {'database_table': databaseTable}})
+    else:
+        # return jsonify({'status': 'not_ok'})
+        return redirect(url_for('authenticate'))
+
+@app.route('/allroomsperdept', methods=['POST'])
+def allRoomsPerDept():
+    if 'user' in session:
+        data = request.get_json()
+
+        # monitor load controller
+        monitorLoad = MonitorLoad()
+
+        # get total solar rating
+        allRoomsInEveryDept = monitorLoad.allRooms(data['input'])
+       
+        return jsonify({'status': 'ok', 'data': {'all_rooms': allRoomsInEveryDept}})
+    else:
+        # return jsonify({'status': 'not_ok'})
+        return redirect(url_for('authenticate'))
+
+@app.route('/alldept')
+def allDept():
+    if 'user' in session:
+        # monitor load controller
+        monitorLoad = MonitorLoad()
+
+        # get total solar rating
+        allDept = monitorLoad.allDept()
+       
+        return jsonify({'status': 'ok', 'data': {'all_dept': allDept}})
+    else:
+        # return jsonify({'status': 'not_ok'})
+        return redirect(url_for('authenticate'))

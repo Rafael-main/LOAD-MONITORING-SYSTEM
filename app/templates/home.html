@@ -2,6 +2,7 @@
 {% block content %}
 
 <div class="m-2">
+  <div id="alertContainer"></div>
   <div class="container row">
     <div class="col">
       <!-- filter modal button -->
@@ -12,26 +13,25 @@
       <!-- filter Modal -->
       <div class="modal fade" id="filterDataModal" tabindex="-1" aria-labelledby="filterDataModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-          <form method="POST">
-            {{ filter_form.csrf_token }}
-            {{ filter_form.hidden_tag() }}
-            <div class="modal-content">
-              <div class="modal-header">
-                <h1 class="modal-title fs-5" id="filterDataModalLabel">Filter</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="filterDataModalLabel">Filter</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              
+              <form method="POST" id="filterDept">
                 <div class="mb-3">
                   <label for="addDept" class="form-label">Select Department</label>
-                  {{ filter_form.filterData(class="form-select form-select-lg mb-3") }}
+                  <select id="addDept" class="form-select form-select-lg mb-3">
+                  </select>
                 </div>
-              </div>
-              <div class="modal-footer">
-                {{ filter_form.input_filter_submit(class="btn btn-danger") }}
-              </div>
+                <!-- <button type="submit" class="btn btn-danger">Filter</button> -->
+              </form>
             </div>
-          </form>
+            <div class="modal-footer">
+            </div>
+          </div>
         </div>
       </div>
 
@@ -48,158 +48,93 @@
               <h1 class="modal-title fs-5" id="addRecModalLabel">Add Record</h1>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form method="POST">
-              {{ input_data_form.csrf_token }}
-              {{ input_data_form.hidden_tag() }}
-              <div class="modal-body">
-                <div class="container">
-                  {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                      {% for category, message in messages %}
-                        <div class = "m-2 alert alert-{{ category }} w-100">
-                          {{ message }}
-                        </div>
-                      {% endfor %}
-                    {% endif %}
-                  {% endwith %}
+            <div class="modal-body">
+              <div class="container">
+                <form id="addrecord">
                   <div class="mb-3">
-
-                    <!-- <input type="text" class="form-control" id="addDept" aria-describedby="departmentname"> -->
-                    <label for="addDept" class="form-label">Department</label>
-                    {% if input_data_form.deptname.errors %}
-                    {{ input_data_form.deptname(class = "form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                      {% for errors in input_data_form.deptname.errors %}
-                      <span>{{ errors }}</span>
-                      {% endfor %}
-                    </div>
-                    {% else %}
-                      {{ input_data_form.deptname(class="form-control", placeholder="Department", id="addDept") }}
-                    {% endif %}
+                    <label for="addDeptname" class="form-label">Department</label>
+                    <input value="None" type="text" class="form-control" id="addDeptname" name="department" aria-describedby="departmentname">
                   </div>
                   <div class="mb-3">
                     <label for="roomName" class="form-label">Room Name</label>
-                    {% if input_data_form.roomname.errors %}
-                    {{ input_data_form.roomname(class = "form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                      {% for errors in input_data_form.roomname.errors %}
-                      <span>{{ errors }}</span>
-                      {% endfor %}
-                    </div>
-                    {% else %}
-                      {{ input_data_form.roomname(class="form-control", placeholder="Room", id="roomName") }}
-                    {% endif %}
+                    <input value="None" type="text" class="form-control" id="roomName" name="room" aria-describedby="roomname">
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="itemm">Item</label>
-                    {% if input_data_form.item.errors %}
-                    {{ input_data_form.item(class = "form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                      {% for errors in input_data_form.item.errors %}
-                      <span>{{ errors }}</span>
-                      {% endfor %}
-                    </div>
-                    {% else %}
-                      {{ input_data_form.item(class="form-control", placeholder="Item", id="itemm") }}
-                    {% endif %}
+                    <input value="None" type="text" class="form-control" id="itemm" name="item" aria-describedby="item">
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="brandnameitemm">Brand Name Item</label>
-                    {% if input_data_form.brandnameitem.errors %}
-                    {{ input_data_form.brandnameitem(class = "form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                      {% for errors in input_data_form.brandnameitem.errors %}
-                      <span>{{ errors }}</span>
-                      {% endfor %}
-                    </div>
-                    {% else %}
-                      {{ input_data_form.brandnameitem(class="form-control", placeholder="Brand Name Item", id="brandnameitemm") }}
-                    {% endif %}
+                    <input value="None "type="text" class="form-control" id="brandnameitemm" name="brandNameItem" aria-describedby="brandnameitem">
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="loadnumss"># of Load</label>
-                    {% if input_data_form.loadnums.errors %}
-                    {{ input_data_form.loadnums(class = "form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                      {% for errors in input_data_form.loadnums.errors %}
-                      <span>{{ errors }}</span>
-                      {% endfor %}
-                    </div>
-                    {% else %}
-                      {{ input_data_form.loadnums(class="form-control", placeholder="# of Load", id="loadnumss") }}
-                    {% endif %}
+                    <input value=0 type="number" class="form-control" step="1" id="loadnumss" name="loadNums">
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="ratingsevv">Ratings E(V)</label>
-                    {% if input_data_form.ratingsev.errors %}
-                    {{ input_data_form.ratingsev(class = "form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                      {% for errors in input_data_form.ratingsev.errors %}
-                      <span>{{ errors }}</span>
-                      {% endfor %}
-                    </div>
-                    {% else %}
-                      {{ input_data_form.ratingsev(class="form-control", placeholder="Ratings E(V)", id="ratingsevv") }}
-                    {% endif %}
+                    <input value=0 type="number" class="form-control" step="0.01" id="ratingsevv" name="ratingsEV">
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="ratingsiaa">Ratings I(A)</label>
-                    {% if input_data_form.ratingsia.errors %}
-                    {{ input_data_form.ratingsia(class = "form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                      {% for errors in input_data_form.ratingsia.errors %}
-                      <span>{{ errors }}</span>
-                      {% endfor %}
-                    </div>
-                    {% else %}
-                      {{ input_data_form.ratingsia(class="form-control", placeholder="Ratings I(A)", id="ratingsiaa") }}
-                    {% endif %}
+                    <input value=0 type="number" class="form-control" step="0.01" id="ratingsiaa" name="ratingsIA">
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="ratingspww">Ratings P(W)</label>
-                    {% if input_data_form.ratingspw.errors %}
-                    {{ input_data_form.ratingspw(class = "form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                      {% for errors in input_data_form.ratingspw.errors %}
-                      <span>{{ errors }}</span>
-                      {% endfor %}
-                    </div>
-                    {% else %}
-                      {{ input_data_form.ratingspw(class="form-control", placeholder="Ratings P(W)", id="ratingspww") }}
-                    {% endif %}
+                    <input value=0 type="number" class="form-control" step="0.01" id="ratingspww" name="ratingsPW">
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="actualpww">Actual P(W)</label>
-                    {% if input_data_form.actualpw.errors %}
-                    {{ input_data_form.actualpw(class = "form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                      {% for errors in input_data_form.actualpw.errors %}
-                      <span>{{ errors }}</span>
-                      {% endfor %}
-                    </div>
-                    {% else %}
-                      {{ input_data_form.actualpw(class="form-control", placeholder="Actual P(W)", id="actualpww") }}
-                    {% endif %}
+                    <input value=0 type="number" class="form-control" step="0.01" id="actualpww" name="actualPW">
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="usagefactorr">Usage Factor</label>
-                    {% if input_data_form.usagefactor.errors %}
-                    {{ input_data_form.usagefactor(class = "form-control is-invalid") }}
-                    <div class="invalid-feedback">
-                      {% for errors in input_data_form.usagefactor.errors %}
-                      <span>{{ errors }}</span>
-                      {% endfor %}
-                    </div>
-                    {% else %}
-                      {{ input_data_form.usagefactor(class="form-control", placeholder="Usage Factor", id="usagefactorr") }}
-                    {% endif %}
+                    <input value=0 type="number" class="form-control" step="0.01" id="usagefactorr" name="usageFactor">
                   </div>
-                </div>
+
+                  <button type="submit" class="btn btn-danger">Add record</button>
+                </form>
               </div>
-              <div class="modal-footer">
-                {{ input_data_form.input_data_submit(class="btn btn-danger") }}
-              </div>
-            </form>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- table modal button -->
+      <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#tableDataModal">
+        Database
+      </button>
+
+      <!-- table Modal -->
+      <div class="modal fade" id="tableDataModal" tabindex="-1" aria-labelledby="tableDataModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="tableDataModalLabel">Database</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Department Name</th>
+                    <th scope="col">Room Name</th>
+                    <th scope="col">Load</th>
+                    <th scope="col">Brand Item Load</th>
+                    <th scope="col"># of Load</th>
+                    <th scope="col">Ratings E(V)</th>
+                    <th scope="col">Ratings I(A)</th>
+                    <th scope="col">Ratings P(W)</th>
+                    <th scope="col">Actual P(W)</th>
+                    <th scope="col">Usage Factor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
           </div>
         </div>
       </div>
@@ -212,12 +147,20 @@
         <div class="card-header">Total Wattage</div>
         <div class="card-body">
           <h5 class="card-title"></h5>
-          <h4 class="card-text">{{ 942 }} KW</h4>
+          <h4 id="totalwattage" class="card-text">{{ 942 }} KW</h4>
         </div>
       </div>
     </div>
     <div class="col">
-      <h2>Load Selected Department</h2>
+      <h2>Room Load for Every Dept.</h2>
+      <!-- <form class="pt-2">
+        <label for="allrooms" class="form-label">Select Rooms Per Dept</label>
+        <select class="form-select form-select-sm mb-3" id="allrooms">
+          <option value="option1">Option 1</option>
+          <option value="option2">Option 2</option>
+          <option value="option3">Option 3</option>
+        </select>
+      </form> -->
       <canvas id="myChart"></canvas>
     </div>
 
@@ -227,7 +170,7 @@
         <div class="card-header">Total Generated</div>
         <div class="card-body">
           <p class="card-title">Solar PV</p>
-          <h4 class="card-text">{{ 586 }} KW</h4>
+          <h4 id="totalgensolar" class="card-text">{{ 586 }} KW</h4>
         </div>
       </div>
 
@@ -240,55 +183,297 @@
 </div>
 
 <script>
-  const ctx = document.getElementById('myChart');
-  const pieCtx = document.getElementById('lmsPieChart')
+  $(document).ready(function() {
+    const ctx = document.getElementById('myChart');
+    var roomChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: [],
+        datasets: []
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    }); 
+    
+    const pieCtx = document.getElementById('lmsPieChart')
+    var deptChart = new Chart(pieCtx, {
+      type: 'doughnut',
+      data: {
+        labels: [],
+        datasets: []
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+    function showSuccessAlert(message) {
+      // Create the success alert HTML
+      var alertHtml = '<div style="z-index:-1 important!;" class="alert alert-success alert-dismissible fade show" role="alert">' +
+        message +
+        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+        '<span aria-hidden="true">&times;</span>' +
+        '</button>' +
+        '</div>';
 
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-      datasets: [{
-        label: '# of Load per Room  ',
-        data: [12, 19, 3, 5, 2, 3],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
-        }
-      }
+      $('#alertContainer').html(alertHtml);
+
+      setTimeout(function() {
+        $('.alert').alert('close');
+      }, 3000);
     }
-  });
+
+
+    function getTotalWattage() {
+      $.ajax({
+        url: '/totalColWattage',
+        method: 'GET',
+        success: function(res) {
+          var wattageData = res['data']['total_wattage']
+          console.log(wattageData)
+          $('#totalwattage').text(`${wattageData.toString()} KV`)
+        },
+        error: function(xhr, status, error) {
+          console.log(error)
+        }
+      })
+    }
+    function getTotalSolarGenerated() {
+      $.ajax({
+        url: '/totalColSolarGenerate',
+        method: 'GET',
+        success: function(res) {
+          var solarGenData = res['data']['solar_rating']
+          console.log(solarGenData)
+          $('#totalgensolar').text(`${solarGenData.toString()} KV`)
+        },
+        error: function(xhr, status, error) {
+          console.log(error)
+        }
+      })
+    }
+    function getRoomDataChart(currdept) {
+      $.ajax({
+        url:'/roomdata',
+        method:'POST',
+        data: JSON.stringify({
+          'currdept' : currdept,
+        }),
+        success: function(res) {
+          var roomDataLabels = res['data']['room_load_per_dept']['labels']
+          console.log(roomDataLabels)
+          var roomDatasets = res['data']['room_load_per_dept']['data']
+          console.log(roomDatasets)
+
+          // bar chart    
+          roomChart.destroy()
+
+          roomChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: roomDataLabels,
+              datasets: roomDatasets
+            },
+            options: {
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            }
+          });   
+        },
+        error: function(xhr, status, error) {
+          console.log(error)
+        }
+        
+      })
+    }
+    function getDeptDataChart() {
+      $.ajax({
+        url:'/deptdata',
+        method:'GET',
+        success: function(res) {
+          var deptDataLabels = res['data']['dept_load']['labels']
+          console.log(deptDataLabels)
+          var deptDatasets = res['data']['dept_load']['data']
+          console.log(deptDatasets)
+
+          deptChart.destroy()
+
+          // pie chart
+          deptChart =  new Chart(pieCtx, {
+            type: 'doughnut',
+            data: {
+              labels: deptDataLabels,
+              datasets: deptDatasets
+            },
+            options: {
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            }
+          });
+            
+        },
+        error: function(xhr, status, error) {
+          console.log(error)
+        }
+      })
+    }
+
+    
+    function getTableData() {
+      $.get('/databasetable', function(data) {
+          // Clear the current table data
+          $('tbody').empty();
+          var tableData = data['data']['database_table']
+          // Loop through the data array and append each row to the table
+          $.each(tableData, function(index, itemData) {
+          var row = '<tr>' +
+              '<td>' + itemData.deptName + '</td>' +
+              '<td>' + itemData.roomName + '</td>' +
+              '<td>' + itemData.item + '</td>' +
+              '<td>' + itemData.brandNameItem + '</td>' +
+              '<td>' + itemData.loadNums + '</td>' +
+              '<td>' + itemData.ratingsEV + '</td>' +
+              '<td>' + itemData.ratingsIA + '</td>' +
+              '<td>' + itemData.ratingsPW + '</td>' +
+              '<td>' + itemData.actualPW + '</td>' +
+              '<td>' + itemData.usageFactor + '</td>' +
+              '</tr>';
+          $('tbody').append(row);
+          });
+      });
+    }
+    
+    function allRooms(deptVal) {
+      var requestData = {
+        'input': deptVal
+      };
   
-  new Chart(pieCtx, {
-    type: 'doughnut',
-    data: {
-  labels: [
-    'Red',
-    'Blue',
-    'Yellow'
-  ],
-  datasets: [{
-    label: 'My First Dataset',
-    data: [300, 50, 100],
-    backgroundColor: [
-      'rgb(255, 99, 132)',
-      'rgb(54, 162, 235)',
-      'rgb(255, 205, 86)'
-    ],
-    hoverOffset: 4
-  }]
-},
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true
+      // to get all rooms in the current dept
+      // must change when dept at the top changes
+      $.ajax({
+        url: '/allroomsperdept',
+        method: 'POST',
+        data: JSON.stringify(requestData),
+        contentType: 'application/json',
+        success: function(res) {
+          console.log(res['data']['all_rooms'])
+          // Assuming the response is an array of option values
+          var options = res['data']['all_rooms']
+
+          // Clear existing options (if any)
+          $('#allrooms').empty();
+
+          // Append new options
+          $.each(options, function(index, value) {
+            $('#allrooms').append($('<option>').text(value).attr('value', value));
+          });
+
+          getRoomDataChart(deptVal)
+        },
+        error: function(xhr, status, error) {
+          console.log(error)
         }
-      }
+      })
     }
-  });
+
+    
+
+    // listen to dept changes then
+    // change room select
+    $('#addDept').change(function() {
+      var selectedValue = $(this).val();
+      console.log('Selected value:', selectedValue);
+      allRooms(selectedValue)
+    });
+
+
+    function getDept(){
+      // get all dept
+      $.ajax({
+        url: '/alldept',
+        method: 'GET',
+        success: function(res) {
+          // Assuming the response is an array of option values
+          var options = res['data']['all_dept']
+  
+          // Clear existing options (if any)
+          $('#addDept').empty();
+  
+          // Append new options
+          $.each(options, function(index, value) {
+            $('#addDept').append($('<option>').text(value).attr('value', value));
+          });
+  
+          allRooms($('#addDept').val())
+        },
+        error: function(xhr, status, error) {
+          console.log(error)
+        }
+      })
+    }
+
+    $('#addrecord').submit(function(event) {
+      event.preventDefault();
+
+      var formData = $(this).serialize();
+      // var formData = new FormData(
+
+      console.log('Form Data:', formData);
+
+      $.ajax({
+        url: '/addrecordfor', // Replace with the Flask endpoint URL
+        method: 'POST',
+        data: formData, // Convert form data array to JSON string
+        success: function(response) {
+          // Handle success response from Flask
+          console.log('Flask response:', response['data']['dept_load']);
+
+          // Optionally, reset the form
+          $('#addrecord')[0].reset();
+          showSuccessAlert('Record Added to Database');
+          
+          if (response['status'] === 'ok') {
+            getRoomDataChart()
+            getDeptDataChart()
+            getTableData()
+            getTotalSolarGenerated()
+            getTotalWattage()  
+            getDept()
+            
+            
+          }
+          // $('#addRecModal').model('hide')
+        },
+        error: function(xhr, status, error) {
+          console.error(error);
+        }
+      });
+      
+    });
+
+    getRoomDataChart()
+    getDeptDataChart()
+    getTableData()
+    getTotalSolarGenerated()
+    getTotalWattage()  
+    getDept()
+ 
+  })
+
 
 </script>
 

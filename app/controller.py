@@ -2,6 +2,7 @@ from flask import jsonify
 from app.models import User, Department, Room, Load
 from app import db
 import app.secrets as secrets
+from random import randrange
 
 class UserController:
     def __init__(self, uuid=None, username=None, password=None) :
@@ -27,7 +28,6 @@ class UserController:
         
     def loginUser(self):
         try:
-            print(User.query.all())
             curr_user = User.query.filter_by(name=self.userUserName).first()
             password = self.userPasswordProcess.to_process(self.userPassword)
             if self.userPasswordProcess.check_hash(password, curr_user.password):
@@ -43,16 +43,16 @@ class MonitorLoad:
             loadUUID=None, 
             roomUUID=None, 
             deptUUID=None, 
-            department=None, 
-            room=None, 
-            item=None, 
-            brandNameItem=None, 
-            loadNums=None, 
-            ratingsEV=None, 
-            ratingsIA=None, 
-            ratingsPW=None, 
-            actualPW=None, 
-            usageFactor=None
+            department='None', 
+            room='None', 
+            item='None', 
+            brandNameItem='None', 
+            loadNums=0, 
+            ratingsEV=0, 
+            ratingsIA=0, 
+            ratingsPW=0, 
+            actualPW=0, 
+            usageFactor=0
         ):
         self.deptUUID = deptUUID
         self.roomUUID = roomUUID
@@ -75,32 +75,71 @@ class MonitorLoad:
         loadReqsDatabase = Load.query.all()
         for loadReq in loadReqsDatabase:
             totalRating += int(loadReq.ratingspw)
-        print(totalRating)
-        return 992
+        return totalRating
     
     def totalSolarGenerate(self):
-        # WLA PANI KARUN
+        # COMING SOON
         return 0
     
-    def roomLoadPerDept(self):
+    def roomLoadPerDept(self, currDept=None):
 
-        # TOTAL RATING P (W)
-        labels =  ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange']
-        data = [12, 19, 3, 5, 2, 3]
+        if currDept is None:
+            dept = Department.query.first()
+        else:            
+            dept = Department.query.filter_by(deptname=currDept).first()
+
+        roomDataList = []
+        roomLabelList = []
+        for room in dept.roomkeyf:
+            roomCounterList = []
+            for load in room.loadkeyf:
+                loadCounter = 0
+                loadCounter += load.ratingspw
+                roomCounterList.append(loadCounter)
+            roomLabelList.append(room.roomname)
+            sumRoomLoad = sum(roomCounterList)
+            roomDataList.append(sumRoomLoad)
+
+        datasets = [{
+            'label': f'# of Load per {currDept}',
+            # 'data': [12.5],
+            'data': roomDataList,
+            'borderWidth': 1
+        }]
         return {
-            'labels': labels,
-            'data' : data
+            'labels': roomLabelList,  
+            'data' : datasets
         }
 
     def departmentLoad(self):
 
         # TOTAL RATING P (W)
-        labels = [
-            'Red',
-            'Blue',
-            'Yellow'
+
+        deptDataList = []
+        deptLabelList = []
+        
+     
+        dept = Department.query.all()
+        for oneDept in dept:
+            for totalRoomSumLoad in oneDept.roomkeyf:
+                roomCounterList = []
+                for totalSumLoad in totalRoomSumLoad.loadkeyf:
+                    loadCounter = 0
+                    loadCounter += float(totalSumLoad.ratingspw )
+                    roomCounterList.append(loadCounter)
+                sumRoomCounterList = sum(roomCounterList)
+            
+            deptDataList.append(sumRoomCounterList)
+            deptLabelList.append(oneDept.deptname)
+
+        labels = deptLabelList
+        data = [
+            {
+                'label': 'Department Load',
+                'data': deptDataList,
+                'hoverOffset': 4
+            }
         ]
-        data = [300, 50, 100]
         return {
             'labels' : labels,
             'data' : data
@@ -111,32 +150,36 @@ class MonitorLoad:
             
             dept = Department(
                 # dept uuid
-                self.department,
-                # room fkey
+                uuid=self.deptUUID,
+                deptname=self.department,
             )
 
-            db.session.add(dept)
 
             room = Room(
                 # uuid room
-                self.room,
-                # load fkey
+                uuid=self.roomUUID,
+                roomname=self.room,
+                department=dept
             )
 
-            db.session.add(room)
 
             load = Load(
                 # uuid load
-                self.item,
-                self.brandNameItem,
-                self.loadNums,
-                self.ratingsEV,
-                self.ratingsIA,
-                self.ratingsPW,
-                self.actualPW,
-                self.usageFactor,
-                # room key
+                uuid=self.loadUUID,
+                item=self.item,
+                brandnametitem=self.brandNameItem,
+                loadnums=int(self.loadNums),
+                ratingsev=float(self.ratingsEV),
+                ratingsia=float(self.ratingsIA),
+                ratingspw=float(self.ratingsPW),
+                actualpw=float(self.actualPW),
+                usagefactor=float(self.usageFactor),
+                room=room
             )
+
+
+            db.session.add(dept)
+            db.session.add(room)
             db.session.add(load)
 
             db.session.commit()
@@ -152,17 +195,14 @@ class MonitorLoad:
         allRecordsList = []
 
         for rec in allRecords:
-            print(rec.deptname)
             for room in rec.roomkeyf:
-                print(room.roomname)
                 for load in room.loadkeyf:
-                    print(load.uuid)
                     allRecordsList.append({
                         'deptName': rec.deptname,
                         'roomName': room.roomname,
                         'item' : load.item,
                         'brandNameItem' : load.brandnametitem ,
-                        'loadNums' : load.nums,
+                        'loadNums' : load.loadnums,
                         'ratingsEV' : load.ratingsev,
                         'ratingsIA' : load.ratingsia,
                         'ratingsPW' : load.ratingspw,
@@ -170,8 +210,21 @@ class MonitorLoad:
                         'usageFactor' : load.usagefactor
 
                     })
-        print(allRecordsList)
-        return 'table here'
+        return allRecordsList
+
+    def allRooms(self, dept):
+        rooms = []
+        currDept = Department.query.filter_by(deptname=dept).first()
+        for room in currDept.roomkeyf:
+            rooms.append(room.roomname)
+        return rooms
+
+    def allDept(self):
+        deptData = []
+        allDeptQuery = Department.query.all()
+        for dept in allDeptQuery:
+            deptData.append(dept.deptname)
+        return deptData
 
 
 

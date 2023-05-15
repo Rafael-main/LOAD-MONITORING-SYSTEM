@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, SubmitField, SelectField, PasswordField, TextAreaField
+from wtforms import StringField, SubmitField, SelectField, PasswordField, IntegerField, DecimalField
 from wtforms.validators import InputRequired, Length, ValidationError, DataRequired, Email
 
 
@@ -20,12 +20,12 @@ class InputDataForm(FlaskForm):
     roomname = StringField('Room', validators=[InputRequired()])
     item = StringField('Item', validators=[InputRequired()])
     brandnameitem = StringField('Brand Name Item', validators=[InputRequired()])
-    loadnums = StringField('Load Nums', validators=[InputRequired()])
-    ratingsev = StringField('RatingsEV', validators=[InputRequired()])
-    ratingsia = StringField('RatingsIA', validators=[InputRequired()])
-    ratingspw = StringField('RatingsPW', validators=[InputRequired()])
-    actualpw = StringField('ActualPW', validators=[InputRequired()])
-    usagefactor = StringField('Usage Factor', validators=[InputRequired()])
+    loadnums = IntegerField('Load Nums', validators=[InputRequired()])
+    ratingsev = DecimalField('RatingsEV', validators=[InputRequired()])
+    ratingsia = DecimalField('RatingsIA', validators=[InputRequired()])
+    ratingspw = DecimalField('RatingsPW', validators=[InputRequired()])
+    actualpw = DecimalField('ActualPW', validators=[InputRequired()])
+    usagefactor = DecimalField('Usage Factor', validators=[InputRequired()])
     input_data_submit = SubmitField('Add Record')
 
 class FilterForm(FlaskForm):

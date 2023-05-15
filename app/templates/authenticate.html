@@ -47,7 +47,7 @@
                   {% if loginForm.login_username.errors %}
                     {{ loginForm.login_username(class = "is-invalid") }}
                     <div class="invalid-feedback">
-                        {% for errors in loginForm.username.errors %}
+                        {% for errors in loginForm.login_username.errors %}
                             <span>{{ errors }}</span>
                         {% endfor %}
                     </div>

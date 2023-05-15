@@ -31,18 +31,18 @@ class Room(db.Model):
     deptid = db.Column(db.Integer, db.ForeignKey('department.id'),
         nullable=False)
 
-    loadkeyf = db.relationship('Load', backref='department', lazy=True)
+    loadkeyf = db.relationship('Load', backref='room', lazy=True)
 
 class Load(db.Model):
     id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
     uuid = db.Column(db.String(1000))
-    item = db.Column(db.String(100))
-    brandnametitem = db.Column(db.String(1000))
-    loadnums = db.Column(db.Integer)
-    ratingsev = db.Column(db.Float)
-    ratingsia = db.Column(db.Integer)
-    ratingspw = db.Column(db.Float)
-    actualpw = db.Column(db.Float)
-    usagefactor = db.Column(db.Float)
+    item = db.Column(db.String(100), nullable=True)
+    brandnametitem = db.Column(db.String(1000), nullable=True)
+    loadnums = db.Column(db.Integer, nullable=True)
+    ratingsev = db.Column(db.Float, nullable=True)
+    ratingsia = db.Column(db.Float, nullable=True)
+    ratingspw = db.Column(db.Float, nullable=True)
+    actualpw = db.Column(db.Float, nullable=True)
+    usagefactor = db.Column(db.Float, nullable=True)
     roomid = db.Column(db.Integer, db.ForeignKey('room.id'),
         nullable=False)
