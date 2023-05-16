@@ -1,22 +1,11 @@
 from app import db
 from datetime import datetime
 
-# User class is for admin role that only has access to website
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
     uuid = db.Column(db.String(1000))
     password = db.Column(db.String(100))
     name = db.Column(db.String(1000))
-
-
-# dept(one-to-many sa room)							
-# pimid	uuid	rmkeyf							
-									
-# room(many-to-one sa dept)	(one-to-many sa load)								
-# primid	uuid	rmno	loadkeyf						
-									
-# load(many-to-one sa room)					
-# primid	uuid	item	branditem	loadnums	ratingsev	ratingsia	ratingspw	actualpw	usagefactor
 
 class Department(db.Model):
     id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
