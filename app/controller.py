@@ -117,21 +117,31 @@ class MonitorLoad:
 
         deptDataList = []
         deptLabelList = []
-        
+        totalLoad = {}
+
+        dept_name_lists = Department.query.all()
+        for dept_name_list in dept_name_lists:
+            totalLoad[dept_name_list.deptname] = 0.0
      
         dept = Department.query.all()
         for oneDept in dept:
+            deptCounterList = []
             for totalRoomSumLoad in oneDept.roomkeyf:
                 roomCounterList = []
                 for totalSumLoad in totalRoomSumLoad.loadkeyf:
-                    loadCounter = 0
-                    loadCounter += float(totalSumLoad.ratingspw )
+                    loadCounter = 0.0
+                    loadCounter += totalSumLoad.ratingspw
                     roomCounterList.append(loadCounter)
                 sumRoomCounterList = sum(roomCounterList)
-            
-            deptDataList.append(sumRoomCounterList)
-            deptLabelList.append(oneDept.deptname)
+                deptCounterList.append(sumRoomCounterList)
+            sumDeptCounterList = sum(deptCounterList)
+            totalLoad[oneDept.deptname] = (totalLoad[oneDept.deptname] + sum(deptCounterList))
 
+
+        for key in totalLoad.keys():
+            deptLabelList.append(key)
+        for value in totalLoad.values():
+            deptDataList.append(value)
         labels = deptLabelList
         data = [
             {
@@ -187,7 +197,6 @@ class MonitorLoad:
             # 
             return 'working'
         except:
-            print('controller not working')
             return 'not working'
 
     def databaseTable(self):
@@ -224,7 +233,7 @@ class MonitorLoad:
         allDeptQuery = Department.query.all()
         for dept in allDeptQuery:
             deptData.append(dept.deptname)
-        return deptData
+        return list(set(deptData))
 
 
 

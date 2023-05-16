@@ -23,7 +23,7 @@
               <form method="POST" id="filterDept">
                 <div class="mb-3">
                   <label for="addDept" class="form-label">Select Department</label>
-                  <select id="addDept" class="form-select form-select-lg mb-3">
+                  <select name="currdept" id="addDept" class="form-select form-select-lg mb-3">
                   </select>
                 </div>
                 <!-- <button type="submit" class="btn btn-danger">Filter</button> -->
@@ -238,7 +238,6 @@
         method: 'GET',
         success: function(res) {
           var wattageData = res['data']['total_wattage']
-          console.log(wattageData)
           $('#totalwattage').text(`${wattageData.toString()} KV`)
         },
         error: function(xhr, status, error) {
@@ -252,7 +251,6 @@
         method: 'GET',
         success: function(res) {
           var solarGenData = res['data']['solar_rating']
-          console.log(solarGenData)
           $('#totalgensolar').text(`${solarGenData.toString()} KV`)
         },
         error: function(xhr, status, error) {
@@ -264,14 +262,13 @@
       $.ajax({
         url:'/roomdata',
         method:'POST',
+        contentType: 'application/json',
         data: JSON.stringify({
           'currdept' : currdept,
         }),
         success: function(res) {
           var roomDataLabels = res['data']['room_load_per_dept']['labels']
-          console.log(roomDataLabels)
           var roomDatasets = res['data']['room_load_per_dept']['data']
-          console.log(roomDatasets)
 
           // bar chart    
           roomChart.destroy()
@@ -303,9 +300,7 @@
         method:'GET',
         success: function(res) {
           var deptDataLabels = res['data']['dept_load']['labels']
-          console.log(deptDataLabels)
           var deptDatasets = res['data']['dept_load']['data']
-          console.log(deptDatasets)
 
           deptChart.destroy()
 
@@ -370,7 +365,6 @@
         data: JSON.stringify(requestData),
         contentType: 'application/json',
         success: function(res) {
-          console.log(res['data']['all_rooms'])
           // Assuming the response is an array of option values
           var options = res['data']['all_rooms']
 
@@ -382,7 +376,6 @@
             $('#allrooms').append($('<option>').text(value).attr('value', value));
           });
 
-          getRoomDataChart(deptVal)
         },
         error: function(xhr, status, error) {
           console.log(error)
@@ -390,17 +383,14 @@
       })
     }
 
-    
 
-    // listen to dept changes then
-    // change room select
     $('#addDept').change(function() {
       var selectedValue = $(this).val();
       console.log('Selected value:', selectedValue);
       allRooms(selectedValue)
+      getRoomDataChart(selectedValue)
     });
-
-
+  
     function getDept(){
       // get all dept
       $.ajax({
@@ -432,17 +422,12 @@
       var formData = $(this).serialize();
       // var formData = new FormData(
 
-      console.log('Form Data:', formData);
 
       $.ajax({
         url: '/addrecordfor', // Replace with the Flask endpoint URL
         method: 'POST',
         data: formData, // Convert form data array to JSON string
         success: function(response) {
-          // Handle success response from Flask
-          console.log('Flask response:', response['data']['dept_load']);
-
-          // Optionally, reset the form
           $('#addrecord')[0].reset();
           showSuccessAlert('Record Added to Database');
           
@@ -462,10 +447,40 @@
           console.error(error);
         }
       });
-      
     });
+    
+    $.ajax({
+      url:'/roomdata',
+      method:'GET',
+      success: function(res) {
+        var roomDataLabels = res['data']['room_load_per_dept']['labels']
+        var roomDatasets = res['data']['room_load_per_dept']['data']
 
-    getRoomDataChart()
+        // bar chart    
+        roomChart.destroy()
+
+        roomChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: roomDataLabels,
+            datasets: roomDatasets
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true
+              }
+            }
+          }
+        });   
+      },
+      error: function(xhr, status, error) {
+        console.log(error)
+      }
+      
+    })
+
+    // getRoomDataChart()
     getDeptDataChart()
     getTableData()
     getTotalSolarGenerated()

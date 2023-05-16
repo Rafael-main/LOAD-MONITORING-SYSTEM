@@ -7,6 +7,7 @@ from app.controller import UserController, MonitorLoad
 from app.forms import LoginForm, SignUpForm, InputDataForm, FilterForm
 import uuid
 from datetime import datetime
+import json
 
 
 @app.route('/')
@@ -179,9 +180,10 @@ def roomdata():
         monitorLoad = MonitorLoad()
         if request.method == 'POST':
 
-            curr_dept = request.get_json()['currdept']
+            curr_dept = json.loads(request.data)['currdept']
             roomloadperdept = monitorLoad.roomLoadPerDept(currDept=curr_dept)
-        roomloadperdept = monitorLoad.roomLoadPerDept()
+        else:
+            roomloadperdept = monitorLoad.roomLoadPerDept()
         
        
         return jsonify({'status': 'ok', 'data': {'room_load_per_dept':roomloadperdept}})
