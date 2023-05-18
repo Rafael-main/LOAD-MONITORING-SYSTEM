@@ -178,12 +178,13 @@ def roomdata():
     # bar chart
     if 'user' in session:
         monitorLoad = MonitorLoad()
-        if request.method == 'POST':
+        if request.method == 'GET':
 
-            curr_dept = json.loads(request.data)['currdept']
-            roomloadperdept = monitorLoad.roomLoadPerDept(currDept=curr_dept)
-        else:
             roomloadperdept = monitorLoad.roomLoadPerDept()
+        elif request.method == 'POST':
+            curr_dept = request.get_json()
+            # curr_dept = json.loads(request.data)['currdept']
+            roomloadperdept = monitorLoad.roomLoadPerDept(currDept=curr_dept['currdept'])
         
        
         return jsonify({'status': 'ok', 'data': {'room_load_per_dept':roomloadperdept}})
@@ -261,6 +262,58 @@ def allDept():
         allDept = monitorLoad.allDept()
        
         return jsonify({'status': 'ok', 'data': {'all_dept': allDept}})
+    else:
+        # return jsonify({'status': 'not_ok'})
+        return redirect(url_for('authenticate'))
+
+@app.route('/updateload/<id>', methods=['PUT'])
+def updateLoad(id):
+    if 'user' in session:
+        updatedData = request.get_json()
+        deptName = updatedData['dept']
+        roomName = updatedData['room']
+        item = updatedData['item']
+        brand = updatedData['brand']
+        load = updatedData['load']
+        rateev = updatedData['rateev']
+        rateia = updatedData['rateia']
+        ratepw = updatedData['ratepw']
+        actpw = updatedData['actpw']
+        usagefac = updatedData['usagefac']
+        # monitor load controller
+        monitorLoad = MonitorLoad(
+            department=deptName,
+            room= roomName,
+            item=item,
+            brandNameItem=brand,
+            loadNums=load,
+            ratingsEV=rateev,
+            ratingsIA=rateia,
+            ratingsPW=ratepw,
+            actualPW=actpw,
+            usageFactor=usagefac
+        )
+
+        # get total solar rating
+        monitorLoad.updateLoadRecord(id=id)
+       
+        return jsonify({'message': 'Data updated successfully!'})
+    else:
+        # return jsonify({'status': 'not_ok'})
+        return redirect(url_for('authenticate'))
+
+
+@app.route('/deleteload/<id>', methods=['DELETE'])
+def deleteLoad(id):
+    if 'user' in session:
+
+        # monitor load controller
+        monitorLoad = MonitorLoad()
+
+        # get total solar rating
+        monitorLoad.deleteLoadRecord(id=id)
+       
+        return jsonify({'message': 'Data deleted successfully!'})
     else:
         # return jsonify({'status': 'not_ok'})
         return redirect(url_for('authenticate'))

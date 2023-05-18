@@ -207,6 +207,7 @@ class MonitorLoad:
             for room in rec.roomkeyf:
                 for load in room.loadkeyf:
                     allRecordsList.append({
+                        '_id': load.id,
                         'deptName': rec.deptname,
                         'roomName': room.roomname,
                         'item' : load.item,
@@ -234,6 +235,31 @@ class MonitorLoad:
         for dept in allDeptQuery:
             deptData.append(dept.deptname)
         return list(set(deptData))
+
+    def updateLoadRecord(self, id):
+        try:
+            updateRecord = Load.query.filter_by(id=id).first()
+            updateRecord.item = self.item
+            updateRecord.brandnametitem = self.brandNameItem
+            updateRecord.loadnums = self.loadNums
+            updateRecord.ratingsev = self.ratingsEV
+            updateRecord.ratingsia = self.ratingsIA
+            updateRecord.ratingspw = self.ratingsPW 
+            updateRecord.actualpw = self.actualPW
+            updateRecord.usagefactor = self.usageFactor
+
+            db.session.commit()
+            return 'load record updated'
+        except:
+            return 'something went wrong'
+    
+    def deleteLoadRecord(self, id):
+        try:
+            Load.query.filter_by(id=id).delete()
+            db.session.commit()
+            return 'load record deleted.'
+        except:
+            return 'something went wrong.'
 
 
 

@@ -126,10 +126,70 @@
                     <th scope="col">Ratings P(W)</th>
                     <th scope="col">Actual P(W)</th>
                     <th scope="col">Usage Factor</th>
+                    <th scope="col">Actions</th>
+
                   </tr>
                 </thead>
                 <tbody>
                 </tbody>
+                <!-- edit modal -->
+                <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="editModalLabel">Edit Record</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <form id="edit-form" action="PUT">
+                          <div class="mb-3">
+                            <label for="edit-dept-name" class="form-label">Department</label>
+                            <input type="text" class="form-control" id="edit-dept-name" name="editdepartment" aria-describedby="departmentname" readonly>
+                          </div>
+                          <div class="mb-3">
+                            <label for="edit-room-name" class="form-label">Room Name</label>
+                            <input type="text" class="form-control" id="edit-room-name" name="editroom" aria-describedby="roomname" readonly>
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label" for="edit-item">Item</label>
+                            <input type="text" class="form-control" id="edit-item" name="edititem" aria-describedby="item">
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label" for="edit-branditemname">Brand Name Item</label>
+                            <input type="text" class="form-control" id="edit-branditemname" name="editbrandNameItem" aria-describedby="brandnameitem">
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label" for="edit-loadnums"># of Load</label>
+                            <input type="number" class="form-control" step="1" id="edit-loadnums" name="editloadNums">
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label" for="edit-ratingsev">Ratings E(V)</label>
+                            <input type="number" class="form-control" step="0.01" id="edit-ratingsev" name="editratingsEV">
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label" for="edit-ratingsia">Ratings I(A)</label>
+                            <input type="number" class="form-control" step="0.01" id="edit-ratingsia" name="editratingsIA">
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label" for="edit-ratingspw">Ratings P(W)</label>
+                            <input type="number" class="form-control" step="0.01" id="edit-ratingspw" name="editratingsPW">
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label" for="edit-actualpw">Actual P(W)</label>
+                            <input type="number" class="form-control" step="0.01" id="edit-actualpw" name="editactualPW">
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label" for="edit-usagefactor">Usage Factor</label>
+                            <input type="number" class="form-control" step="0.01" id="edit-usagefactor" name="editusageFactor">
+                          </div>
+                          <button type="submit" class="btn btn-danger">Submit</button>
+                        </form>
+                      </div>
+                      <div class="modal-footer">
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </table>
             </div>
             <div class="modal-footer">
@@ -259,13 +319,12 @@
       })
     }
     function getRoomDataChart(currdept) {
+      var data = {currdept: currdept}
       $.ajax({
         url:'/roomdata',
         method:'POST',
         contentType: 'application/json',
-        data: JSON.stringify({
-          'currdept' : currdept,
-        }),
+        data: JSON.stringify(data),
         success: function(res) {
           var roomDataLabels = res['data']['room_load_per_dept']['labels']
           var roomDatasets = res['data']['room_load_per_dept']['data']
@@ -330,26 +389,160 @@
     
     function getTableData() {
       $.get('/databasetable', function(data) {
+          var tableBody = $("tbody")
           // Clear the current table data
-          $('tbody').empty();
+          $(tableBody).empty();
           var tableData = data['data']['database_table']
           // Loop through the data array and append each row to the table
           $.each(tableData, function(index, itemData) {
-          var row = '<tr>' +
-              '<td>' + itemData.deptName + '</td>' +
-              '<td>' + itemData.roomName + '</td>' +
-              '<td>' + itemData.item + '</td>' +
-              '<td>' + itemData.brandNameItem + '</td>' +
-              '<td>' + itemData.loadNums + '</td>' +
-              '<td>' + itemData.ratingsEV + '</td>' +
-              '<td>' + itemData.ratingsIA + '</td>' +
-              '<td>' + itemData.ratingsPW + '</td>' +
-              '<td>' + itemData.actualPW + '</td>' +
-              '<td>' + itemData.usageFactor + '</td>' +
-              '</tr>';
-          $('tbody').append(row);
+          // var row = '<tr>' +
+          //     '<td>' + itemData.deptName + '</td>' +
+          //     '<td>' + itemData.roomName + '</td>' +
+          //     '<td>' + itemData.item + '</td>' +
+          //     '<td>' + itemData.brandNameItem + '</td>' +
+          //     '<td>' + itemData.loadNums + '</td>' +
+          //     '<td>' + itemData.ratingsEV + '</td>' +
+          //     '<td>' + itemData.ratingsIA + '</td>' +
+          //     '<td>' + itemData.ratingsPW + '</td>' +
+          //     '<td>' + itemData.actualPW + '</td>' +
+          //     '<td>' + itemData.usageFactor + '</td>' +
+          //     '</tr>';
+          // $('tbody').append(row);
+
+          var row = $('<tr>').appendTo(tableBody);
+          $('<td>').text(itemData.deptName).appendTo(row);
+          $('<td>').text(itemData.roomName).appendTo(row);
+          $('<td>').text(itemData.item).appendTo(row);
+          $('<td>').text(itemData.brandNameItem).appendTo(row);
+          $('<td>').text(itemData.loadNums).appendTo(row);
+          $('<td>').text(itemData.ratingsEV).appendTo(row);
+          $('<td>').text(itemData.ratingsIA).appendTo(row);
+          $('<td>').text(itemData.ratingsPW).appendTo(row);
+          $('<td>').text(itemData.actualPW).appendTo(row);
+          $('<td>').text(itemData.usageFactor).appendTo(row);
+
+          // Add Edit button to update the row
+          var editButton = $('<button>').text('Edit').addClass('btn edit-button').appendTo(row);
+          editButton.attr('data-id', itemData._id);
+
+          // Add Delete button to delete the row
+          var deleteButton = $('<button>').text('Delete').addClass('btn delete-button').appendTo(row);
+          deleteButton.attr('data-id', itemData._id);
+          });
+
+          $('.edit-button').on('click', function() {
+            var id = $(this).attr('data-id');
+            // Perform the update operation based on the ID
+            // You can call the updateData(id, data) function here
+            console.log('Edit button clicked for ID:', id);
+            var id = $(this).attr('data-id');
+            var deptname = $(this).closest('tr').find('td:eq(0)').text();
+            var roomname = $(this).closest('tr').find('td:eq(1)').text();
+            var item = $(this).closest('tr').find('td:eq(2)').text();
+            var branditemname = $(this).closest('tr').find('td:eq(3)').text();
+            var loadnums = $(this).closest('tr').find('td:eq(4)').text();
+            var ratingsev = $(this).closest('tr').find('td:eq(5)').text();
+            var ratingsia = $(this).closest('tr').find('td:eq(6)').text();
+            var ratingspw = $(this).closest('tr').find('td:eq(7)').text();
+            var actualpw = $(this).closest('tr').find('td:eq(8)').text();
+            var usagefactor = $(this).closest('tr').find('td:eq(9)').text();
+
+            $('#edit-name').val(name);
+            $('#edit-dept-name').val(deptname);
+            $('#edit-room-name').val(roomname);
+            $('#edit-item').val(item);
+            $('#edit-branditemname').val(branditemname);
+            $('#edit-loadnums').val(parseInt(loadnums));
+            $('#edit-ratingsev').val(parseFloat(ratingsev));
+            $('#edit-ratingsia').val(parseFloat(ratingsia));
+            $('#edit-ratingspw').val(parseFloat(ratingspw));
+            $('#edit-actualpw').val(parseFloat(actualpw));
+            $('#edit-usagefactor').val(parseFloat(usagefactor));
+
+            $('#editModal').modal('show');
+
+            $('#edit-form').on('submit', function(event) {
+                event.preventDefault();
+                var updatedName = $('#edit-name').val();
+                var updatedDeptName = $('#edit-dept-name').val();
+                var updatedRoomName = $('#edit-room-name').val();
+                var updatedItem = $('#edit-item').val();
+                var updatedBrand = $('#edit-branditemname').val();
+                var updatedLoad = $('#edit-loadnums').val();
+                var updatedEV = $('#edit-ratingsev').val();
+                var updatedIA = $('#edit-ratingsia').val();
+                var updatedPW = $('#edit-ratingspw').val();
+                var updatedActualPW = $('#edit-actualpw').val();
+                var updatedUsageFactor = $('#edit-usagefactor').val();
+                var data = {
+                    dept: updatedDeptName,
+                    room: updatedRoomName,
+                    item: updatedItem,
+                    brand: updatedBrand,
+                    load: updatedLoad,
+                    rateev: updatedEV,
+                    rateia: updatedIA,
+                    ratepw: updatedPW,
+                    actpw: updatedActualPW,
+                    usagefac: updatedUsageFactor
+                };
+                console.log(data)
+                updateData(id, data);
+
+                $('#editModal').modal('hide');
+          
+            });
+          });
+
+          $('.delete-button').on('click', function() {
+            var id = $(this).attr('data-id');
+            
+            deleteData(id)
+
+            console.log('Delete button clicked for ID:', id);
           });
       });
+    }
+
+    // UPDATE Request
+    function updateData(id, data) { 
+        $.ajax({
+            url: '/updateload/' + id,
+            type: 'PUT',
+            data: JSON.stringify(data),
+            contentType: 'application/json',
+            success: function(response) {
+              getRoomDataChart()
+              getDeptDataChart()
+              getTableData()
+              getTotalSolarGenerated()
+              getTotalWattage()  
+              getDept()
+            },
+            error: function(error) {
+                console.log('Error:', error);
+            }
+        });
+    }
+
+    // DELETE Request
+    function deleteData(id) {
+        $.ajax({
+            url: '/deleteload/' + id,
+            type: 'DELETE',
+            success: function(response) {
+              console.log(response.message);
+              getRoomDataChart()
+              getDeptDataChart()
+              getTableData()
+              getTotalSolarGenerated()
+              getTotalWattage()  
+              getDept()
+            },
+            error: function(error) {
+                console.log('Error:', error);
+            }
+        });
     }
     
     function allRooms(deptVal) {
