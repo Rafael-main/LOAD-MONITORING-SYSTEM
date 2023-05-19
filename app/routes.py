@@ -152,7 +152,17 @@ def addrecordfor():
         return jsonify({'status': 'ok', 'data': {'dept_load':department}})
        
     else:
-        # return jsonify({'status': 'not_ok'})
+        return redirect(url_for('authenticate'))
+
+@app.route('/addsolar', methods=['POST'])
+def addsolar():
+    if 'user' in session:
+        solar = request.form.get('addSolarData')
+        print(solar)
+        monitorLoad = MonitorLoad(solarLoad=int(solar))
+        monitorLoad.addSolarGenerate()
+        return jsonify({'status': 'ok'})
+    else:
         return redirect(url_for('authenticate'))
 
 @app.route('/deptdata')

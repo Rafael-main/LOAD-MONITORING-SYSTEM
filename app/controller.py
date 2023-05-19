@@ -1,5 +1,5 @@
 from flask import jsonify
-from app.models import User, Department, Room, Load
+from app.models import User, Department, Room, Load, SolarLoad
 from app import db
 import app.secrets as secrets
 from random import randrange
@@ -52,7 +52,8 @@ class MonitorLoad:
             ratingsIA=0, 
             ratingsPW=0, 
             actualPW=0, 
-            usageFactor=0
+            usageFactor=0,
+            solarLoad = 0
         ):
         self.deptUUID = deptUUID
         self.roomUUID = roomUUID
@@ -67,6 +68,7 @@ class MonitorLoad:
         self.ratingsPW = ratingsPW 
         self.actualPW = actualPW
         self.usageFactor = usageFactor
+        self.solarLoad = solarLoad
 
     # get total wattage
     def totalWattage(self):
@@ -78,38 +80,60 @@ class MonitorLoad:
         return totalRating
     
     def totalSolarGenerate(self):
-        # COMING SOON
-        return 0
+        try:
+            totalSolarLoad = 0
+            totalLoadSolar = SolarLoad.query.all()
+            for i in totalLoadSolar:
+                totalSolarLoad += i.load
+            return totalSolarLoad
+        except:
+            return 0
+
+    
+    def addSolarGenerate(self):
+        try:
+            loadSolar = SolarLoad(load=self.solarLoad)
+            db.session.add(loadSolar)
+            db.session.commit()
+            return 'ok'
+        except:
+            return 'not ok'
     
     def roomLoadPerDept(self, currDept=None):
+        try:
 
-        if currDept is None:
-            dept = Department.query.first()
-        else:            
-            dept = Department.query.filter_by(deptname=currDept).first()
+            if currDept is None:
+                dept = Department.query.first()
+            else:            
+                dept = Department.query.filter_by(deptname=currDept).first()
 
-        roomDataList = []
-        roomLabelList = []
-        for room in dept.roomkeyf:
-            roomCounterList = []
-            for load in room.loadkeyf:
-                loadCounter = 0
-                loadCounter += load.ratingspw
-                roomCounterList.append(loadCounter)
-            roomLabelList.append(room.roomname)
-            sumRoomLoad = sum(roomCounterList)
-            roomDataList.append(sumRoomLoad)
+            roomDataList = []
+            roomLabelList = []
+            for room in dept.roomkeyf:
+                roomCounterList = []
+                for load in room.loadkeyf:
+                    loadCounter = 0
+                    loadCounter += load.ratingspw
+                    roomCounterList.append(loadCounter)
+                roomLabelList.append(room.roomname)
+                sumRoomLoad = sum(roomCounterList)
+                roomDataList.append(sumRoomLoad)
 
-        datasets = [{
-            'label': f'# of Load per {currDept}',
-            # 'data': [12.5],
-            'data': roomDataList,
-            'borderWidth': 1
-        }]
-        return {
-            'labels': roomLabelList,  
-            'data' : datasets
-        }
+            datasets = [{
+                'label': f'# of Load per {currDept}',
+                # 'data': [12.5],
+                'data': roomDataList,
+                'borderWidth': 1
+            }]
+            return {
+                'labels': roomLabelList,  
+                'data' : datasets
+            }
+        except:
+            return {
+                'labels': [],
+                'data': [{}]
+            }
 
     def departmentLoad(self):
 
@@ -223,11 +247,15 @@ class MonitorLoad:
         return allRecordsList
 
     def allRooms(self, dept):
-        rooms = []
-        currDept = Department.query.filter_by(deptname=dept).first()
-        for room in currDept.roomkeyf:
-            rooms.append(room.roomname)
-        return rooms
+        try:
+
+            rooms = []
+            currDept = Department.query.filter_by(deptname=dept).first()
+            for room in currDept.roomkeyf:
+                rooms.append(room.roomname)
+            return rooms
+        except: 
+            return []
 
     def allDept(self):
         deptData = []

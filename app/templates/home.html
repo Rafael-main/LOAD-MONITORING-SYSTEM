@@ -5,6 +5,36 @@
   <div id="alertContainer"></div>
   <div class="container row">
     <div class="col">
+      <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#addSolarDataModal">
+        Add Solar Power
+      </button>
+
+      <!-- filter Modal -->
+      <div class="modal fade" id="addSolarDataModal" tabindex="-1" aria-labelledby="addSolarDataModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="addSolarDataModalLabel">Filter</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              
+              <form method="POST" id="add-solar">
+                <div class="mb-3">
+                  <label for="add-solar-data" class="form-label">Add Solar</label>
+                  <input name="addSolarData" id="add-solar-data" class="form-control mb-3">
+                  </select>
+                </div>
+                
+                <button type="submit" class="btn btn-danger">Add Solar</button>
+                <!-- <button type="submit" class="btn btn-danger">Filter</button> -->
+              </form>
+            </div>
+            <div class="modal-footer">
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- filter modal button -->
       <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#filterDataModal">
         Filter
@@ -305,6 +335,13 @@
         }
       })
     }
+
+    // function addSolarGenerated(data) {
+    //   $.ajax({
+    //     url: ''
+    //   })
+    // }
+
     function getTotalSolarGenerated() {
       $.ajax({
         url: '/totalColSolarGenerate',
@@ -390,24 +427,10 @@
     function getTableData() {
       $.get('/databasetable', function(data) {
           var tableBody = $("tbody")
-          // Clear the current table data
           $(tableBody).empty();
           var tableData = data['data']['database_table']
-          // Loop through the data array and append each row to the table
           $.each(tableData, function(index, itemData) {
-          // var row = '<tr>' +
-          //     '<td>' + itemData.deptName + '</td>' +
-          //     '<td>' + itemData.roomName + '</td>' +
-          //     '<td>' + itemData.item + '</td>' +
-          //     '<td>' + itemData.brandNameItem + '</td>' +
-          //     '<td>' + itemData.loadNums + '</td>' +
-          //     '<td>' + itemData.ratingsEV + '</td>' +
-          //     '<td>' + itemData.ratingsIA + '</td>' +
-          //     '<td>' + itemData.ratingsPW + '</td>' +
-          //     '<td>' + itemData.actualPW + '</td>' +
-          //     '<td>' + itemData.usageFactor + '</td>' +
-          //     '</tr>';
-          // $('tbody').append(row);
+          
 
           var row = $('<tr>').appendTo(tableBody);
           $('<td>').text(itemData.deptName).appendTo(row);
@@ -421,19 +444,15 @@
           $('<td>').text(itemData.actualPW).appendTo(row);
           $('<td>').text(itemData.usageFactor).appendTo(row);
 
-          // Add Edit button to update the row
           var editButton = $('<button>').text('Edit').addClass('btn edit-button').appendTo(row);
           editButton.attr('data-id', itemData._id);
 
-          // Add Delete button to delete the row
           var deleteButton = $('<button>').text('Delete').addClass('btn delete-button').appendTo(row);
           deleteButton.attr('data-id', itemData._id);
           });
 
           $('.edit-button').on('click', function() {
             var id = $(this).attr('data-id');
-            // Perform the update operation based on the ID
-            // You can call the updateData(id, data) function here
             console.log('Edit button clicked for ID:', id);
             var id = $(this).attr('data-id');
             var deptname = $(this).closest('tr').find('td:eq(0)').text();
@@ -608,6 +627,24 @@
         }
       })
     }
+
+    $('#add-solar').submit(function(event) {
+      event.preventDefault()
+
+      var formData = $(this).serialize()
+      console.log(formData)
+      $.ajax({
+        url: '/addsolar',
+        method: 'POST',
+        data: formData,
+        success: function(response) {
+          $('#add-solar')[0].reset()
+          if (response['status'] === 'ok') {
+            getTotalSolarGenerated()
+          }
+        }
+      })
+    })
 
     $('#addrecord').submit(function(event) {
       event.preventDefault();

@@ -35,3 +35,10 @@ class Load(db.Model):
     usagefactor = db.Column(db.Float, nullable=True)
     roomid = db.Column(db.Integer, db.ForeignKey('room.id'),
         nullable=False)
+
+class SolarLoad(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    load = db.Column(db.Integer(), default=0)
+    loadinputtime = db.Column(db.DateTime(), default=datetime.now())
+    loadinputdate = db.Column(db.Date(), default=datetime.today())
+          
