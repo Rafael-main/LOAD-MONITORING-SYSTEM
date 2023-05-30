@@ -3,6 +3,7 @@ from app.models import User, Department, Room, Load, SolarLoad
 from app import db
 import app.secrets as secrets
 from random import randrange
+import datetime
 
 class UserController:
     def __init__(self, uuid=None, username=None, password=None) :
@@ -53,8 +54,11 @@ class MonitorLoad:
             ratingsPW=0, 
             actualPW=0, 
             usageFactor=0,
-            solarLoad = 0
+            solarLoad = 0,
+            loaddate = '',
+            solardate = ''
         ):
+        self.loaddate = loaddate
         self.deptUUID = deptUUID
         self.roomUUID = roomUUID
         self.loadUUID = loadUUID
@@ -69,6 +73,8 @@ class MonitorLoad:
         self.actualPW = actualPW
         self.usageFactor = usageFactor
         self.solarLoad = solarLoad
+        self.loaddate = loaddate
+        self.solardate = solardate
 
     # get total wattage
     def totalWattage(self):
@@ -92,33 +98,75 @@ class MonitorLoad:
     
     def addSolarGenerate(self):
         try:
-            loadSolar = SolarLoad(load=self.solarLoad)
+            loadSolar = SolarLoad(load=self.solarLoad, loadinputdate=self.solardate)
             db.session.add(loadSolar)
             db.session.commit()
             return 'ok'
         except:
             return 'not ok'
     
-    def roomLoadPerDept(self, currDept=None):
+    def getAllYear(self):
+        formatYear = '%Y-%m-%d'
+        allYears = []
+        recordLoadAllYears = Load.query.all()
+        for strYear in  recordLoadAllYears:
+            date = datetime.datetime.strptime(strYear.date, formatYear)
+            yearNum = date.year
+            allYears.append(yearNum)
+        allYears = list(set(allYears))
+        return allYears
+    
+    def roomLoadPerDept(self, currDept=None, currDate=2023):
         try:
 
-            if currDept is None:
-                dept = Department.query.first()
-            else:            
-                dept = Department.query.filter_by(deptname=currDept).first()
+            loadInMonth = {
+                'January': 0,
+                'February': 0,
+                'March': 0,
+                'April': 0,
+                'May': 0,
+                'June': 0,
+                'July': 0,
+                'August': 0,
+                'September': 0,
+                'October': 0,
+                'November': 0,
+                'December': 0,
+            }
+            formatDatetime = '%Y-%m-%d'
+            allLoad = Load.query.all()
+            for load in allLoad:
+                stringDate = load.date
+                convertStringToDatetime = datetime.datetime.strptime(stringDate, formatDatetime)
+                if convertStringToDatetime.year == currDate:
+                    month = convertStringToDatetime.date().strftime('%B')
+                    loadInMonth[month] = loadInMonth[month] + load.ratingspw
+            # if currDept is None:
+            #     dept = Department.query.first()
+            # else:            
+            #     dept = Department.query.filter_by(deptname=currDept).first()
+            # for room in dept.roomkeyf:
+            #     roomCounterList = []
+            #     for load in room.loadkeyf:
+            #         stringDate = load.date
+            #         convertStringToDatetime = datetime.datetime.strptime(stringDate, formatDatetime)
+            #         if convertStringToDatetime.year == currDate:
 
-            roomDataList = []
-            roomLabelList = []
-            for room in dept.roomkeyf:
-                roomCounterList = []
-                for load in room.loadkeyf:
-                    loadCounter = 0
-                    loadCounter += load.ratingspw
-                    roomCounterList.append(loadCounter)
-                roomLabelList.append(room.roomname)
-                sumRoomLoad = sum(roomCounterList)
-                roomDataList.append(sumRoomLoad)
+            #             month = convertStringToDatetime.date().strftime('%B')
 
+            #             loadInMonth[month] = loadInMonth[month] + load.ratingspw
+
+            #         loadCounter = 0
+            #         loadCounter += load.ratingspw
+            #         roomCounterList.append(loadCounter)
+            #     roomLabelList.append(room.roomname)
+            #     sumRoomLoad = sum(roomCounterList)
+            #     roomDataList.append(sumRoomLoad)
+
+            roomDataList = list(loadInMonth.values())
+            roomLabelList = list(loadInMonth.keys())
+            print(roomDataList)
+            print(roomLabelList)
             datasets = [{
                 'label': f'# of Load per {currDept}',
                 # 'data': [12.5],
@@ -208,6 +256,7 @@ class MonitorLoad:
                 ratingspw=float(self.ratingsPW),
                 actualpw=float(self.actualPW),
                 usagefactor=float(self.usageFactor),
+                date=self.loaddate,
                 room=room
             )
 
@@ -223,27 +272,27 @@ class MonitorLoad:
         except:
             return 'not working'
 
-    def databaseTable(self):
+    def databaseTable(self, value=1.0):
         allRecords = Department.query.all()
         allRecordsList = []
-
+        print('model database table', value)
         for rec in allRecords:
             for room in rec.roomkeyf:
                 for load in room.loadkeyf:
-                    allRecordsList.append({
-                        '_id': load.id,
-                        'deptName': rec.deptname,
-                        'roomName': room.roomname,
-                        'item' : load.item,
-                        'brandNameItem' : load.brandnametitem ,
-                        'loadNums' : load.loadnums,
-                        'ratingsEV' : load.ratingsev,
-                        'ratingsIA' : load.ratingsia,
-                        'ratingsPW' : load.ratingspw,
-                        'actualPW' : load.actualpw,
-                        'usageFactor' : load.usagefactor
-
-                    })
+                    if load.usagefactor <= value:
+                        allRecordsList.append({
+                            '_id': load.id,
+                            'deptName': rec.deptname,
+                            'roomName': room.roomname,
+                            'item' : load.item,
+                            'brandNameItem' : load.brandnametitem ,
+                            'loadNums' : load.loadnums,
+                            'ratingsEV' : load.ratingsev,
+                            'ratingsIA' : load.ratingsia,
+                            'ratingsPW' : load.ratingspw,
+                            'actualPW' : load.actualpw,
+                            'usageFactor' : load.usagefactor
+                        })
         return allRecordsList
 
     def allRooms(self, dept):

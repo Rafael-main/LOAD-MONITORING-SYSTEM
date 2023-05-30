@@ -119,6 +119,7 @@ def addrecordfor():
         loadUUID= f'load-{str(uuid.uuid4())[:5]}'
 
         # data from ajax
+        dateDate = request.form.get('addDateTo')
         department = request.form.get('department')
         room = request.form.get('room')
         item = request.form.get('item')
@@ -129,7 +130,8 @@ def addrecordfor():
         ratingsPW = request.form.get('ratingsPW')
         actualPW = request.form.get('actualPW')
         usageFactor = request.form.get('usageFactor')
-
+        print(dateDate)
+        
         # monitor load controller
         monitorLoad = MonitorLoad(
             loadUUID=loadUUID,
@@ -145,6 +147,7 @@ def addrecordfor():
             ratingsPW=ratingsPW, 
             actualPW=actualPW, 
             usageFactor=usageFactor,
+            loaddate=dateDate
         )
             # add records
         monitorLoad.loadInfoInput()
@@ -158,8 +161,9 @@ def addrecordfor():
 def addsolar():
     if 'user' in session:
         solar = request.form.get('addSolarData')
+        date = request.form.get('addSolarMonthData')
         print(solar)
-        monitorLoad = MonitorLoad(solarLoad=int(solar))
+        monitorLoad = MonitorLoad(solarLoad=int(solar), solardate=date)
         monitorLoad.addSolarGenerate()
         return jsonify({'status': 'ok'})
     else:
@@ -193,8 +197,8 @@ def roomdata():
             roomloadperdept = monitorLoad.roomLoadPerDept()
         elif request.method == 'POST':
             curr_dept = request.get_json()
-            # curr_dept = json.loads(request.data)['currdept']
-            roomloadperdept = monitorLoad.roomLoadPerDept(currDept=curr_dept['currdept'])
+            print(curr_dept)
+            roomloadperdept = monitorLoad.roomLoadPerDept(currDate=int(curr_dept['year']))
         
        
         return jsonify({'status': 'ok', 'data': {'room_load_per_dept':roomloadperdept}})
@@ -232,16 +236,21 @@ def totalColSolarGenerate():
         # return jsonify({'status': 'not_ok'})
         return redirect(url_for('authenticate'))
 
-@app.route('/databasetable')
+@app.route('/databasetable', methods=['GET', 'POST'])
 def databasetable():
     if 'user' in session:
         # monitor load controller
         monitorLoad = MonitorLoad()
-
+        if request.method == 'POST':
+            value = request.form.get('val')
+            print(value)
+            print(type(value))
+            databaseTable = monitorLoad.databaseTable(value=float(value))
+            return jsonify({'status': 'ok', 'data': {'database_table': databaseTable}})
         # get total solar rating
-        databaseTable = monitorLoad.databaseTable()
-       
-        return jsonify({'status': 'ok', 'data': {'database_table': databaseTable}})
+        else:
+            databaseTable = monitorLoad.databaseTable()
+            return jsonify({'status': 'ok', 'data': {'database_table': databaseTable}})
     else:
         # return jsonify({'status': 'not_ok'})
         return redirect(url_for('authenticate'))
@@ -324,6 +333,22 @@ def deleteLoad(id):
         monitorLoad.deleteLoadRecord(id=id)
        
         return jsonify({'message': 'Data deleted successfully!'})
+    else:
+        # return jsonify({'status': 'not_ok'})
+        return redirect(url_for('authenticate'))
+
+
+@app.route('/allyears', methods=['GET'])
+def allyears():
+    if 'user' in session:
+
+        # monitor load controller
+        monitorLoad = MonitorLoad()
+
+        # get total solar rating
+        year = monitorLoad.getAllYear()
+       
+        return jsonify({'message': 'successful!', 'data': year})
     else:
         # return jsonify({'status': 'not_ok'})
         return redirect(url_for('authenticate'))

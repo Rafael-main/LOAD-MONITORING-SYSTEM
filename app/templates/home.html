@@ -9,12 +9,11 @@
         Add Solar Power
       </button>
 
-      <!-- filter Modal -->
       <div class="modal fade" id="addSolarDataModal" tabindex="-1" aria-labelledby="addSolarDataModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h1 class="modal-title fs-5" id="addSolarDataModalLabel">Filter</h1>
+              <h1 class="modal-title fs-5" id="addSolarDataModalLabel">Add Solar</h1>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -23,11 +22,12 @@
                 <div class="mb-3">
                   <label for="add-solar-data" class="form-label">Add Solar</label>
                   <input name="addSolarData" id="add-solar-data" class="form-control mb-3">
+                  <label for="add-solar-month-data" class="form-label">Month</label>
+                  <input type="date" name="addSolarMonthData" id="add-solar-month-data" class="form-control mb-3">
                   </select>
                 </div>
                 
                 <button type="submit" class="btn btn-danger">Add Solar</button>
-                <!-- <button type="submit" class="btn btn-danger">Filter</button> -->
               </form>
             </div>
             <div class="modal-footer">
@@ -35,11 +35,10 @@
           </div>
         </div>
       </div>
-      <!-- filter modal button -->
-      <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#filterDataModal">
+      <!-- filter -->
+      <button type="button" class="p-2 btn btn-danger" data-bs-toggle="modal" data-bs-target="#filterDataModal">
         Filter
       </button>
-
       <!-- filter Modal -->
       <div class="modal fade" id="filterDataModal" tabindex="-1" aria-labelledby="filterDataModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -50,13 +49,14 @@
             </div>
             <div class="modal-body">
               
-              <form method="POST" id="filterDept">
+              <form method="POST" id="filterUsage">
+                
                 <div class="mb-3">
-                  <label for="addDept" class="form-label">Select Department</label>
-                  <select name="currdept" id="addDept" class="form-select form-select-lg mb-3">
-                  </select>
+                  <label for="powerloss" class="form-label">Power Loss</label>
+                  <input value="1" type="range" class="form-range" min="0.0" max="1" step="0.1" id="powerloss">
+                  <span id="rangeValue">0.0</span>
                 </div>
-                <!-- <button type="submit" class="btn btn-danger">Filter</button> -->
+                <button type="submit" class="btn btn-danger">Filter</button>
               </form>
             </div>
             <div class="modal-footer">
@@ -82,8 +82,19 @@
               <div class="container">
                 <form id="addrecord">
                   <div class="mb-3">
+                    <label for="addDate" class="form-label">Date</label>
+                    <input name="addDateTo" value="2023-5-1" type="date" class="form-control" id="addDate" name="fullDate" aria-describedby="date">
+                  </div>
+                  <div class="mb-3">
                     <label for="addDeptname" class="form-label">Department</label>
-                    <input value="None" type="text" class="form-control" id="addDeptname" name="department" aria-describedby="departmentname">
+                    <select name="department" id="addDeptname" class="form-select" aria-label="select dept">
+                      <option selected>---</option>
+                      <option value="DEET">Department of Electrical Engineering and Technology (DEET)</option>
+                      <option value="DCET">Department of Civil Engineering and Technology (DCET)</option>
+                      <option value="DMRET">Department of Materials and Resources Engineering and Technology (DMRET)</option>
+                      <option value="DMET">Department of Mechanical Engineering and Technology (DMET)</option>
+                      <option value="DCHET">Department of Chemical Engineering and Technology (DCHET)</option>
+                    </select>
                   </div>
                   <div class="mb-3">
                     <label for="roomName" class="form-label">Room Name</label>
@@ -143,6 +154,7 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+              
               <table class="table">
                 <thead>
                   <tr>
@@ -240,17 +252,43 @@
           <h4 id="totalwattage" class="card-text">{{ 942 }} KW</h4>
         </div>
       </div>
+      <div class="card border-danger text-bg-light w-100" style="width: 18rem;">
+        <div class="card-header">Total Power loss</div>
+        <div class="card-body">
+          <h5 class="card-title"></h5>
+          <h4 id="totalpowerloss" class="card-text">0 KW</h4>
+        </div>
+      </div>
     </div>
     <div class="col">
-      <h2>Room Load for Every Dept.</h2>
-      <!-- <form class="pt-2">
-        <label for="allrooms" class="form-label">Select Rooms Per Dept</label>
-        <select class="form-select form-select-sm mb-3" id="allrooms">
-          <option value="option1">Option 1</option>
-          <option value="option2">Option 2</option>
-          <option value="option3">Option 3</option>
-        </select>
-      </form> -->
+      <h2>Monthly Load Consumption</h2>
+      <form method="POST" id="yearChange">
+        <div class="mb-3">
+          <label for="change-year" class="form-label">Select Year</label>
+          <!-- <select name="currdept" id="addDept" class="form-select form-select-lg mb-3"></select> -->
+          <select name="changeYear" id="change-year" class="form-select form-select-lg mb-3">
+            <option selected>---</option>
+            <option value="2022">2022</option>
+            <option value="2023">2023</option>
+          </select>
+        </div>
+        <!-- <div class="mb-3">
+          <select name="changeMonth" id="change-month" class="form-select form-select-lg mb-3">
+            <option  selected>---</option>
+            <option value="January">January</option>
+            <option value="February">February</option>
+            <option value="March">March</option>
+            <option value="April">April</option>
+            <option value="May">May</option>
+            <option value="June">July</option>
+            <option value="August">August</option>
+            <option value="September">September</option>
+            <option value="October">October</option>
+            <option value="November">November</option>
+            <option value="December">December</option>
+          </select>
+        </div> -->
+      </form>
       <canvas id="myChart"></canvas>
     </div>
 
@@ -328,7 +366,7 @@
         method: 'GET',
         success: function(res) {
           var wattageData = res['data']['total_wattage']
-          $('#totalwattage').text(`${wattageData.toString()} KV`)
+          $('#totalwattage').text(`${wattageData.toString()} KW`)
         },
         error: function(xhr, status, error) {
           console.log(error)
@@ -348,15 +386,15 @@
         method: 'GET',
         success: function(res) {
           var solarGenData = res['data']['solar_rating']
-          $('#totalgensolar').text(`${solarGenData.toString()} KV`)
+          $('#totalgensolar').text(`${solarGenData.toString()} KW`)
         },
         error: function(xhr, status, error) {
           console.log(error)
         }
       })
     }
-    function getRoomDataChart(currdept) {
-      var data = {currdept: currdept}
+    function getDateDataChart(year) {
+      var data = {year:year}
       $.ajax({
         url:'/roomdata',
         method:'POST',
@@ -424,103 +462,210 @@
     }
 
     
-    function getTableData() {
-      $.get('/databasetable', function(data) {
-          var tableBody = $("tbody")
-          $(tableBody).empty();
-          var tableData = data['data']['database_table']
-          $.each(tableData, function(index, itemData) {
-          
-
-          var row = $('<tr>').appendTo(tableBody);
-          $('<td>').text(itemData.deptName).appendTo(row);
-          $('<td>').text(itemData.roomName).appendTo(row);
-          $('<td>').text(itemData.item).appendTo(row);
-          $('<td>').text(itemData.brandNameItem).appendTo(row);
-          $('<td>').text(itemData.loadNums).appendTo(row);
-          $('<td>').text(itemData.ratingsEV).appendTo(row);
-          $('<td>').text(itemData.ratingsIA).appendTo(row);
-          $('<td>').text(itemData.ratingsPW).appendTo(row);
-          $('<td>').text(itemData.actualPW).appendTo(row);
-          $('<td>').text(itemData.usageFactor).appendTo(row);
-
-          var editButton = $('<button>').text('Edit').addClass('btn edit-button').appendTo(row);
-          editButton.attr('data-id', itemData._id);
-
-          var deleteButton = $('<button>').text('Delete').addClass('btn delete-button').appendTo(row);
-          deleteButton.attr('data-id', itemData._id);
-          });
-
-          $('.edit-button').on('click', function() {
-            var id = $(this).attr('data-id');
-            console.log('Edit button clicked for ID:', id);
-            var id = $(this).attr('data-id');
-            var deptname = $(this).closest('tr').find('td:eq(0)').text();
-            var roomname = $(this).closest('tr').find('td:eq(1)').text();
-            var item = $(this).closest('tr').find('td:eq(2)').text();
-            var branditemname = $(this).closest('tr').find('td:eq(3)').text();
-            var loadnums = $(this).closest('tr').find('td:eq(4)').text();
-            var ratingsev = $(this).closest('tr').find('td:eq(5)').text();
-            var ratingsia = $(this).closest('tr').find('td:eq(6)').text();
-            var ratingspw = $(this).closest('tr').find('td:eq(7)').text();
-            var actualpw = $(this).closest('tr').find('td:eq(8)').text();
-            var usagefactor = $(this).closest('tr').find('td:eq(9)').text();
-
-            $('#edit-name').val(name);
-            $('#edit-dept-name').val(deptname);
-            $('#edit-room-name').val(roomname);
-            $('#edit-item').val(item);
-            $('#edit-branditemname').val(branditemname);
-            $('#edit-loadnums').val(parseInt(loadnums));
-            $('#edit-ratingsev').val(parseFloat(ratingsev));
-            $('#edit-ratingsia').val(parseFloat(ratingsia));
-            $('#edit-ratingspw').val(parseFloat(ratingspw));
-            $('#edit-actualpw').val(parseFloat(actualpw));
-            $('#edit-usagefactor').val(parseFloat(usagefactor));
-
-            $('#editModal').modal('show');
-
-            $('#edit-form').on('submit', function(event) {
-                event.preventDefault();
-                var updatedName = $('#edit-name').val();
-                var updatedDeptName = $('#edit-dept-name').val();
-                var updatedRoomName = $('#edit-room-name').val();
-                var updatedItem = $('#edit-item').val();
-                var updatedBrand = $('#edit-branditemname').val();
-                var updatedLoad = $('#edit-loadnums').val();
-                var updatedEV = $('#edit-ratingsev').val();
-                var updatedIA = $('#edit-ratingsia').val();
-                var updatedPW = $('#edit-ratingspw').val();
-                var updatedActualPW = $('#edit-actualpw').val();
-                var updatedUsageFactor = $('#edit-usagefactor').val();
-                var data = {
-                    dept: updatedDeptName,
-                    room: updatedRoomName,
-                    item: updatedItem,
-                    brand: updatedBrand,
-                    load: updatedLoad,
-                    rateev: updatedEV,
-                    rateia: updatedIA,
-                    ratepw: updatedPW,
-                    actpw: updatedActualPW,
-                    usagefac: updatedUsageFactor
-                };
-                console.log(data)
-                updateData(id, data);
-
-                $('#editModal').modal('hide');
-          
+    function getTableData(valToFilter=1.0) {
+      console.log(valToFilter)
+      if (valToFilter == 1.0) {
+        $.get('/databasetable', function(data) {
+            totalPowerLoss = 0
+            var tableBody = $("tbody")
+            $(tableBody).empty();
+            var tableData = data['data']['database_table']
+            $.each(tableData, function(index, itemData) {
+            totalPowerLoss += itemData.ratingsPW
+            var row = $('<tr>').appendTo(tableBody);
+            $('<td>').text(itemData.deptName).appendTo(row);
+            $('<td>').text(itemData.roomName).appendTo(row);
+            $('<td>').text(itemData.item).appendTo(row);
+            $('<td>').text(itemData.brandNameItem).appendTo(row);
+            $('<td>').text(itemData.loadNums).appendTo(row);
+            $('<td>').text(itemData.ratingsEV).appendTo(row);
+            $('<td>').text(itemData.ratingsIA).appendTo(row);
+            $('<td>').text(itemData.ratingsPW).appendTo(row);
+            $('<td>').text(itemData.actualPW).appendTo(row);
+            $('<td>').text(itemData.usageFactor).appendTo(row);
+  
+            var editButton = $('<button>').text('Edit').addClass('btn edit-button').appendTo(row);
+            editButton.attr('data-id', itemData._id);
+  
+            var deleteButton = $('<button>').text('Delete').addClass('btn delete-button').appendTo(row);
+            deleteButton.attr('data-id', itemData._id);
             });
-          });
-
-          $('.delete-button').on('click', function() {
-            var id = $(this).attr('data-id');
+  
+            $('.edit-button').on('click', function() {
+              var id = $(this).attr('data-id');
+              console.log('Edit button clicked for ID:', id);
+              var id = $(this).attr('data-id');
+              var deptname = $(this).closest('tr').find('td:eq(0)').text();
+              var roomname = $(this).closest('tr').find('td:eq(1)').text();
+              var item = $(this).closest('tr').find('td:eq(2)').text();
+              var branditemname = $(this).closest('tr').find('td:eq(3)').text();
+              var loadnums = $(this).closest('tr').find('td:eq(4)').text();
+              var ratingsev = $(this).closest('tr').find('td:eq(5)').text();
+              var ratingsia = $(this).closest('tr').find('td:eq(6)').text();
+              var ratingspw = $(this).closest('tr').find('td:eq(7)').text();
+              var actualpw = $(this).closest('tr').find('td:eq(8)').text();
+              var usagefactor = $(this).closest('tr').find('td:eq(9)').text();
+  
+              $('#edit-name').val(name);
+              $('#edit-dept-name').val(deptname);
+              $('#edit-room-name').val(roomname);
+              $('#edit-item').val(item);
+              $('#edit-branditemname').val(branditemname);
+              $('#edit-loadnums').val(parseInt(loadnums));
+              $('#edit-ratingsev').val(parseFloat(ratingsev));
+              $('#edit-ratingsia').val(parseFloat(ratingsia));
+              $('#edit-ratingspw').val(parseFloat(ratingspw));
+              $('#edit-actualpw').val(parseFloat(actualpw));
+              $('#edit-usagefactor').val(parseFloat(usagefactor));
+  
+              $('#editModal').modal('show');
+  
+              $('#edit-form').on('submit', function(event) {
+                  event.preventDefault();
+                  var updatedName = $('#edit-name').val();
+                  var updatedDeptName = $('#edit-dept-name').val();
+                  var updatedRoomName = $('#edit-room-name').val();
+                  var updatedItem = $('#edit-item').val();
+                  var updatedBrand = $('#edit-branditemname').val();
+                  var updatedLoad = $('#edit-loadnums').val();
+                  var updatedEV = $('#edit-ratingsev').val();
+                  var updatedIA = $('#edit-ratingsia').val();
+                  var updatedPW = $('#edit-ratingspw').val();
+                  var updatedActualPW = $('#edit-actualpw').val();
+                  var updatedUsageFactor = $('#edit-usagefactor').val();
+                  var data = {
+                      dept: updatedDeptName,
+                      room: updatedRoomName,
+                      item: updatedItem,
+                      brand: updatedBrand,
+                      load: updatedLoad,
+                      rateev: updatedEV,
+                      rateia: updatedIA,
+                      ratepw: updatedPW,
+                      actpw: updatedActualPW,
+                      usagefac: updatedUsageFactor
+                  };
+                  console.log(data)
+                  updateData(id, data);
+  
+                  $('#editModal').modal('hide');
             
-            deleteData(id)
+              });
+            });
+  
+            $('.delete-button').on('click', function() {
+              var id = $(this).attr('data-id');
+              
+              deleteData(id)
+  
+              console.log('Delete button clicked for ID:', id);
+            });
 
-            console.log('Delete button clicked for ID:', id);
-          });
-      });
+            $('#totalpowerloss').text(`${totalPowerLoss} KW`);
+        });
+      } else {
+        $.post('/databasetable',
+          {val: valToFilter},
+          function(data) {
+            totalPowerLoss = 0
+            var tableBody = $("tbody")
+            $(tableBody).empty();
+            var tableData = data['data']['database_table']
+            $.each(tableData, function(index, itemData) {
+            
+            totalPowerLoss += itemData.ratingsPW
+  
+            var row = $('<tr>').appendTo(tableBody);
+            $('<td>').text(itemData.deptName).appendTo(row);
+            $('<td>').text(itemData.roomName).appendTo(row);
+            $('<td>').text(itemData.item).appendTo(row);
+            $('<td>').text(itemData.brandNameItem).appendTo(row);
+            $('<td>').text(itemData.loadNums).appendTo(row);
+            $('<td>').text(itemData.ratingsEV).appendTo(row);
+            $('<td>').text(itemData.ratingsIA).appendTo(row);
+            $('<td>').text(itemData.ratingsPW).appendTo(row);
+            $('<td>').text(itemData.actualPW).appendTo(row);
+            $('<td>').text(itemData.usageFactor).appendTo(row);
+  
+            var editButton = $('<button>').text('Edit').addClass('btn edit-button').appendTo(row);
+            editButton.attr('data-id', itemData._id);
+  
+            var deleteButton = $('<button>').text('Delete').addClass('btn delete-button').appendTo(row);
+            deleteButton.attr('data-id', itemData._id);
+            });
+  
+            $('.edit-button').on('click', function() {
+              var id = $(this).attr('data-id');
+              console.log('Edit button clicked for ID:', id);
+              var id = $(this).attr('data-id');
+              var deptname = $(this).closest('tr').find('td:eq(0)').text();
+              var roomname = $(this).closest('tr').find('td:eq(1)').text();
+              var item = $(this).closest('tr').find('td:eq(2)').text();
+              var branditemname = $(this).closest('tr').find('td:eq(3)').text();
+              var loadnums = $(this).closest('tr').find('td:eq(4)').text();
+              var ratingsev = $(this).closest('tr').find('td:eq(5)').text();
+              var ratingsia = $(this).closest('tr').find('td:eq(6)').text();
+              var ratingspw = $(this).closest('tr').find('td:eq(7)').text();
+              var actualpw = $(this).closest('tr').find('td:eq(8)').text();
+              var usagefactor = $(this).closest('tr').find('td:eq(9)').text();
+  
+              $('#edit-name').val(name);
+              $('#edit-dept-name').val(deptname);
+              $('#edit-room-name').val(roomname);
+              $('#edit-item').val(item);
+              $('#edit-branditemname').val(branditemname);
+              $('#edit-loadnums').val(parseInt(loadnums));
+              $('#edit-ratingsev').val(parseFloat(ratingsev));
+              $('#edit-ratingsia').val(parseFloat(ratingsia));
+              $('#edit-ratingspw').val(parseFloat(ratingspw));
+              $('#edit-actualpw').val(parseFloat(actualpw));
+              $('#edit-usagefactor').val(parseFloat(usagefactor));
+  
+              $('#editModal').modal('show');
+  
+              $('#edit-form').on('submit', function(event) {
+                  event.preventDefault();
+                  var updatedName = $('#edit-name').val();
+                  var updatedDeptName = $('#edit-dept-name').val();
+                  var updatedRoomName = $('#edit-room-name').val();
+                  var updatedItem = $('#edit-item').val();
+                  var updatedBrand = $('#edit-branditemname').val();
+                  var updatedLoad = $('#edit-loadnums').val();
+                  var updatedEV = $('#edit-ratingsev').val();
+                  var updatedIA = $('#edit-ratingsia').val();
+                  var updatedPW = $('#edit-ratingspw').val();
+                  var updatedActualPW = $('#edit-actualpw').val();
+                  var updatedUsageFactor = $('#edit-usagefactor').val();
+                  var data = {
+                      dept: updatedDeptName,
+                      room: updatedRoomName,
+                      item: updatedItem,
+                      brand: updatedBrand,
+                      load: updatedLoad,
+                      rateev: updatedEV,
+                      rateia: updatedIA,
+                      ratepw: updatedPW,
+                      actpw: updatedActualPW,
+                      usagefac: updatedUsageFactor
+                  };
+                  console.log(data)
+                  updateData(id, data);
+  
+                  $('#editModal').modal('hide');
+            
+              });
+            });
+  
+            $('.delete-button').on('click', function() {
+              var id = $(this).attr('data-id');
+              
+              deleteData(id)
+  
+              console.log('Delete button clicked for ID:', id);
+            });
+            $('#totalpowerloss').text(`${totalPowerLoss} KW`);
+        }, 'json');
+      }
     }
 
     // UPDATE Request
@@ -531,12 +676,13 @@
             data: JSON.stringify(data),
             contentType: 'application/json',
             success: function(response) {
-              getRoomDataChart()
+              getDateDataChart()
               getDeptDataChart()
               getTableData()
               getTotalSolarGenerated()
               getTotalWattage()  
               getDept()
+              getYears()
             },
             error: function(error) {
                 console.log('Error:', error);
@@ -551,12 +697,13 @@
             type: 'DELETE',
             success: function(response) {
               console.log(response.message);
-              getRoomDataChart()
+              getDateDataChart()
               getDeptDataChart()
               getTableData()
               getTotalSolarGenerated()
               getTotalWattage()  
               getDept()
+              getYears()
             },
             error: function(error) {
                 console.log('Error:', error);
@@ -564,43 +711,60 @@
         });
     }
     
-    function allRooms(deptVal) {
-      var requestData = {
-        'input': deptVal
-      };
+    // function allRooms(deptVal) {
+    //   var requestData = {
+    //     'input': deptVal
+    //   };
   
-      // to get all rooms in the current dept
-      // must change when dept at the top changes
-      $.ajax({
-        url: '/allroomsperdept',
-        method: 'POST',
-        data: JSON.stringify(requestData),
-        contentType: 'application/json',
-        success: function(res) {
-          // Assuming the response is an array of option values
-          var options = res['data']['all_rooms']
+    //   // to get all rooms in the current dept
+    //   // must change when dept at the top changes
+    //   $.ajax({
+    //     url: '/allroomsperdept',
+    //     method: 'POST',
+    //     data: JSON.stringify(requestData),
+    //     contentType: 'application/json',
+    //     success: function(res) {
+    //       // Assuming the response is an array of option values
+    //       var options = res['data']['all_rooms']
 
-          // Clear existing options (if any)
-          $('#allrooms').empty();
+    //       // Clear existing options (if any)
+    //       $('#allrooms').empty();
 
-          // Append new options
-          $.each(options, function(index, value) {
-            $('#allrooms').append($('<option>').text(value).attr('value', value));
-          });
+    //       // Append new options
+    //       $.each(options, function(index, value) {
+    //         $('#allrooms').append($('<option>').text(value).attr('value', value));
+    //       });
 
-        },
-        error: function(xhr, status, error) {
-          console.log(error)
-        }
-      })
-    }
+    //     },
+    //     error: function(xhr, status, error) {
+    //       console.log(error)
+    //     }
+    //   })
+    // }
 
 
     $('#addDept').change(function() {
       var selectedValue = $(this).val();
       console.log('Selected value:', selectedValue);
-      allRooms(selectedValue)
-      getRoomDataChart(selectedValue)
+      // allRooms(selectedValue)
+      getDateDataChart(selectedValue)
+    });
+    
+    // $('#change-month').change(function() {
+    //   var selectedValue = $(this).val();
+    //   var selectedYearVal = $('#change-year').val()
+    //   console.log(selectedYearVal)
+    //   console.log('Selected value:', selectedValue);
+    //   // allRooms(selectedValue)
+    //   getDateDataChart(selectedValue, selectedYearVal)
+
+    // });
+    $('#change-year').change(function() {
+      var selectedValue = $(this).val();
+      console.log('Selected value:', selectedValue);
+      // allRooms(selectedValue)
+      getDateDataChart(selectedValue)
+
     });
   
     function getDept(){
@@ -620,12 +784,40 @@
             $('#addDept').append($('<option>').text(value).attr('value', value));
           });
   
-          allRooms($('#addDept').val())
+          // allRooms($('#addDept').val())
         },
         error: function(xhr, status, error) {
           console.log(error)
         }
       })
+    }
+    function getYears(){
+      // get all dept
+      $.ajax({
+        url: '/allyears',
+        method: 'GET',
+        success: function(res) {
+          // Assuming the response is an array of option values
+          var options = res['data']
+  
+          // Clear existing options (if any)
+          $('#change-year').empty();
+  
+          // Append new options
+          $.each(options, function(index, value) {
+            $('#change-year').append($('<option>').text(value).attr('value', value));
+          });
+  
+          // allRooms($('#change-year').val())
+        },
+        error: function(xhr, status, error) {
+          console.log(error)
+        }
+      })
+    }
+
+    function totalLoadPowerLoss() {
+
     }
 
     $('#add-solar').submit(function(event) {
@@ -662,12 +854,13 @@
           showSuccessAlert('Record Added to Database');
           
           if (response['status'] === 'ok') {
-            getRoomDataChart()
+            getDateDataChart()
             getDeptDataChart()
             getTableData()
             getTotalSolarGenerated()
             getTotalWattage()  
             getDept()
+            getYears()
             
             
           }
@@ -709,14 +902,30 @@
       }
       
     })
+    $('#powerloss').on('input', function() {
+        var newValue = $(this).val();
+        $('#rangeValue').text(newValue);
+    });
+    $('#filterUsage').submit(function(event) {
+      event.preventDefault()
+      // var formData = $(this).serialize()
+      // console.log(formData)
+      var rangeValue = $('#powerloss').val();
 
-    // getRoomDataChart()
+
+      console.log(parseFloat(rangeValue).toFixed(1))
+
+      getTableData(valToFilter = parseFloat(rangeValue).toFixed(1))
+   
+    });
+
+    // getDateDataChart()
     getDeptDataChart()
     getTableData()
     getTotalSolarGenerated()
     getTotalWattage()  
     getDept()
- 
+    getYears() 
   })
 
 
