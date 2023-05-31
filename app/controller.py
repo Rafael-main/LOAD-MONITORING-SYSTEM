@@ -272,32 +272,48 @@ class MonitorLoad:
         except:
             return 'not working'
 
-    def databaseTable(self, value=1.0):
+    def databaseTable(self, value=1.0, valLoadItem='All'):
         allRecords = Department.query.all()
         allRecordsList = []
-        print('model database table', value)
+        print('model database table', valLoadItem)
         for rec in allRecords:
             for room in rec.roomkeyf:
                 for load in room.loadkeyf:
-                    if load.usagefactor <= value:
-                        allRecordsList.append({
-                            '_id': load.id,
-                            'deptName': rec.deptname,
-                            'roomName': room.roomname,
-                            'item' : load.item,
-                            'brandNameItem' : load.brandnametitem ,
-                            'loadNums' : load.loadnums,
-                            'ratingsEV' : load.ratingsev,
-                            'ratingsIA' : load.ratingsia,
-                            'ratingsPW' : load.ratingspw,
-                            'actualPW' : load.actualpw,
-                            'usageFactor' : load.usagefactor
-                        })
+                    if valLoadItem == 'All':
+                        if load.usagefactor <= value:
+                            allRecordsList.append({
+                                '_id': load.id,
+                                'deptName': rec.deptname,
+                                'roomName': room.roomname,
+                                'item' : load.item,
+                                'brandNameItem' : load.brandnametitem ,
+                                'loadNums' : load.loadnums,
+                                'ratingsEV' : load.ratingsev,
+                                'ratingsIA' : load.ratingsia,
+                                'ratingsPW' : load.ratingspw,
+                                'actualPW' : load.actualpw,
+                                'usageFactor' : load.usagefactor
+                            })
+                    else:
+                        if load.usagefactor <= value and load.item == valLoadItem:
+                            allRecordsList.append({
+                                '_id': load.id,
+                                'deptName': rec.deptname,
+                                'roomName': room.roomname,
+                                'item' : load.item,
+                                'brandNameItem' : load.brandnametitem ,
+                                'loadNums' : load.loadnums,
+                                'ratingsEV' : load.ratingsev,
+                                'ratingsIA' : load.ratingsia,
+                                'ratingsPW' : load.ratingspw,
+                                'actualPW' : load.actualpw,
+                                'usageFactor' : load.usagefactor
+                            })
+
         return allRecordsList
 
     def allRooms(self, dept):
         try:
-
             rooms = []
             currDept = Department.query.filter_by(deptname=dept).first()
             for room in currDept.roomkeyf:
@@ -337,6 +353,18 @@ class MonitorLoad:
             return 'load record deleted.'
         except:
             return 'something went wrong.'
+        
+    def getAllLoadItem(self):
+        try:
+            loadItemsData = []
+            loadItems = Load.query.all()
+            for loadItem in loadItems:
+                loadItemsData.append(loadItem.item)
+            return list(set(loadItemsData))
+
+        except:
+            return {'status': 'failed'}
+    
 
 
 

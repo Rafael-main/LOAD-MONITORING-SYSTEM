@@ -243,16 +243,13 @@ def databasetable():
         monitorLoad = MonitorLoad()
         if request.method == 'POST':
             value = request.form.get('val')
-            print(value)
-            print(type(value))
-            databaseTable = monitorLoad.databaseTable(value=float(value))
+            valueLoadItem = request.form.get('valToFilterItems')
+            databaseTable = monitorLoad.databaseTable(value=float(value),valLoadItem=str(valueLoadItem))
             return jsonify({'status': 'ok', 'data': {'database_table': databaseTable}})
-        # get total solar rating
         else:
             databaseTable = monitorLoad.databaseTable()
             return jsonify({'status': 'ok', 'data': {'database_table': databaseTable}})
     else:
-        # return jsonify({'status': 'not_ok'})
         return redirect(url_for('authenticate'))
 
 @app.route('/allroomsperdept', methods=['POST'])
@@ -263,7 +260,6 @@ def allRoomsPerDept():
         # monitor load controller
         monitorLoad = MonitorLoad()
 
-        # get total solar rating
         allRoomsInEveryDept = monitorLoad.allRooms(data['input'])
        
         return jsonify({'status': 'ok', 'data': {'all_rooms': allRoomsInEveryDept}})
@@ -349,6 +345,21 @@ def allyears():
         year = monitorLoad.getAllYear()
        
         return jsonify({'message': 'successful!', 'data': year})
+    else:
+        # return jsonify({'status': 'not_ok'})
+        return redirect(url_for('authenticate'))
+
+@app.route('/allloaditem', methods=['GET'])
+def allloaditem():
+    if 'user' in session:
+
+        # monitor load controller
+        monitorLoad = MonitorLoad()
+
+        # get total solar rating
+        loadItems = monitorLoad.getAllLoadItem()
+ 
+        return jsonify({'message': 'successful!', 'data': loadItems})
     else:
         # return jsonify({'status': 'not_ok'})
         return redirect(url_for('authenticate'))

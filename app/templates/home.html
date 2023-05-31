@@ -54,7 +54,13 @@
                 <div class="mb-3">
                   <label for="powerloss" class="form-label">Power Loss</label>
                   <input value="1" type="range" class="form-range" min="0.0" max="1" step="0.1" id="powerloss">
-                  <span id="rangeValue">0.0</span>
+                  <span id="rangeValue">1.0</span>
+                </div>
+                <div class="mb-3">
+                  <label for="loadItem" class="form-label">Load Item</label>
+                  <select name="loadItem" id="load-item" class="form-select" aria-label="load item">
+                    <!-- <option value="All" selected></option> -->
+                  </select>
                 </div>
                 <button type="submit" class="btn btn-danger">Filter</button>
               </form>
@@ -366,7 +372,7 @@
         method: 'GET',
         success: function(res) {
           var wattageData = res['data']['total_wattage']
-          $('#totalwattage').text(`${wattageData.toString()} KW`)
+          $('#totalwattage').text(`${(parseFloat(wattageData) / 1000)} KW`)
         },
         error: function(xhr, status, error) {
           console.log(error)
@@ -386,7 +392,7 @@
         method: 'GET',
         success: function(res) {
           var solarGenData = res['data']['solar_rating']
-          $('#totalgensolar').text(`${solarGenData.toString()} KW`)
+          $('#totalgensolar').text(`${(parseFloat(solarGenData) / 1000)} KW`)
         },
         error: function(xhr, status, error) {
           console.log(error)
@@ -461,10 +467,36 @@
       })
     }
 
+
+    function getLoadItemForFilter() {
+      // get all dept
+      $.ajax({
+        url: '/allloaditem',
+        method: 'GET',
+        success: function(res) {
+          // Assuming the response is an array of option values
+          var options = res['data']
+  
+          // Clear existing options (if any)
+          $('#load-item').empty();
+  
+          // Append new options
+          $('#load-item').append($('<option>').text('All').attr('value', 'All'));
+          $.each(options, function(index, value) {
+            $('#load-item').append($('<option>').text(value).attr('value', value));
+          });
+  
+          // allRooms($('#change-year').val())
+        },
+        error: function(xhr, status, error) {
+          console.log(error)
+        }
+      })
+    }
+
     
-    function getTableData(valToFilter=1.0) {
-      console.log(valToFilter)
-      if (valToFilter == 1.0) {
+    function getTableData(valToFilter=1.0, valToFilterItems='All') {
+      if (valToFilter == 1.0 && valToFilterItems == 'All') {
         $.get('/databasetable', function(data) {
             totalPowerLoss = 0
             var tableBody = $("tbody")
@@ -561,11 +593,14 @@
               console.log('Delete button clicked for ID:', id);
             });
 
-            $('#totalpowerloss').text(`${totalPowerLoss} KW`);
+            $('#totalpowerloss').text(`${(parseFloat(totalPowerLoss) / 1000)} KW`);
         });
       } else {
         $.post('/databasetable',
-          {val: valToFilter},
+          {
+            val: valToFilter,
+            valToFilterItems: valToFilterItems
+          },
           function(data) {
             totalPowerLoss = 0
             var tableBody = $("tbody")
@@ -663,7 +698,7 @@
   
               console.log('Delete button clicked for ID:', id);
             });
-            $('#totalpowerloss').text(`${totalPowerLoss} KW`);
+            $('#totalpowerloss').text(`${(parseFloat(totalPowerLoss) / 1000)} KW`);
         }, 'json');
       }
     }
@@ -906,16 +941,20 @@
         var newValue = $(this).val();
         $('#rangeValue').text(newValue);
     });
+
     $('#filterUsage').submit(function(event) {
       event.preventDefault()
       // var formData = $(this).serialize()
       // console.log(formData)
       var rangeValue = $('#powerloss').val();
+      var filterLoadItem = $('#load-item').val()
+
+      console.log(filterLoadItem)
 
 
       console.log(parseFloat(rangeValue).toFixed(1))
 
-      getTableData(valToFilter = parseFloat(rangeValue).toFixed(1))
+      getTableData(valToFilter = parseFloat(rangeValue).toFixed(1), valToFilterItem=filterLoadItem)
    
     });
 
@@ -926,6 +965,7 @@
     getTotalWattage()  
     getDept()
     getYears() 
+    getLoadItemForFilter()
   })
 
 
