@@ -85,9 +85,10 @@ def home():
                 loadUUID=loadUUID,
                 roomUUID=roomUUID,
                 deptUUID=deptUUID,
-                department= inputDataForm.deptname.data,
+                department=inputDataForm.deptname.data,
                 room=inputDataForm.roomname.data, 
-                item=inputDataForm.item.data, 
+                item=inputDataForm.item.data,
+                loadtype=inputDataForm.loadtype.data,
                 brandNameItem=inputDataForm.brandnameitem.data, 
                 loadNums=inputDataForm.loadnums.data, 
                 ratingsEV=inputDataForm.ratingsev.data, 
@@ -123,6 +124,7 @@ def addrecordfor():
         department = request.form.get('department')
         room = request.form.get('room')
         item = request.form.get('item')
+        loadtype = request.form.get('loadtype')
         brandnameitem = request.form.get('brandNameItem')
         loadNums = request.form.get('loadNums')
         ratingsEV = request.form.get('ratingsEV')
@@ -140,6 +142,7 @@ def addrecordfor():
             department= department,
             room=room, 
             item=item, 
+            loadtype=loadtype,
             brandNameItem=brandnameitem, 
             loadNums=loadNums, 
             ratingsEV=ratingsEV, 
@@ -288,6 +291,7 @@ def updateLoad(id):
         deptName = updatedData['dept']
         roomName = updatedData['room']
         item = updatedData['item']
+        loadtype = updatedData['loadtype']
         brand = updatedData['brand']
         load = updatedData['load']
         rateev = updatedData['rateev']
@@ -300,6 +304,7 @@ def updateLoad(id):
             department=deptName,
             room= roomName,
             item=item,
+            loadtype=loadtype,
             brandNameItem=brand,
             loadNums=load,
             ratingsEV=rateev,
@@ -349,15 +354,15 @@ def allyears():
         # return jsonify({'status': 'not_ok'})
         return redirect(url_for('authenticate'))
 
-@app.route('/allloaditem', methods=['GET'])
-def allloaditem():
+@app.route('/allloadtype', methods=['GET'])
+def allloadtype():
     if 'user' in session:
 
         # monitor load controller
         monitorLoad = MonitorLoad()
 
         # get total solar rating
-        loadItems = monitorLoad.getAllLoadItem()
+        loadItems = monitorLoad.getAllLoadType()
  
         return jsonify({'message': 'successful!', 'data': loadItems})
     else:

@@ -26,6 +26,7 @@ class Load(db.Model):
     id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
     uuid = db.Column(db.String(1000))
     item = db.Column(db.String(100), nullable=True)
+    loadtype = db.Column(db.String(1000), nullable=True)
     brandnametitem = db.Column(db.String(1000), nullable=True)
     loadnums = db.Column(db.Integer, nullable=True)
     ratingsev = db.Column(db.Float, nullable=True)

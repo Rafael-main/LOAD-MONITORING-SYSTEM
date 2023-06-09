@@ -57,8 +57,14 @@
                   <span id="rangeValue">1.0</span>
                 </div>
                 <div class="mb-3">
-                  <label for="loadItem" class="form-label">Load Item</label>
-                  <select name="loadItem" id="load-item" class="form-select" aria-label="load item">
+                  <label for="load-type" class="form-label">Load Type</label>
+                  <select name="loadItem" id="load-type" class="form-select" aria-label="load item">
+                    <!-- <option value="All" selected></option> -->
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="department-filter" class="form-label"></label>
+                  <select name="departmentFilter" id="department-filter " class="form-select" aria-label="load item">
                     <!-- <option value="All" selected></option> -->
                   </select>
                 </div>
@@ -109,6 +115,10 @@
                   <div class="mb-3">
                     <label class="form-label" for="itemm">Item</label>
                     <input value="None" type="text" class="form-control" id="itemm" name="item" aria-describedby="item">
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label" for="load-type">Load Type</label>
+                    <input value="None" type="text" class="form-control" id="load-type" name="loadtype" aria-describedby="load type">
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="brandnameitemm">Brand Name Item</label>
@@ -203,6 +213,10 @@
                             <input type="text" class="form-control" id="edit-item" name="edititem" aria-describedby="item">
                           </div>
                           <div class="mb-3">
+                            <label class="form-label" for="edit-load-type">Load Type</label>
+                            <input value="None" type="text" class="form-control" id="edit-load-type" name="editloadtype" aria-describedby="editloadtype">
+                          </div>
+                          <div class="mb-3">
                             <label class="form-label" for="edit-branditemname">Brand Name Item</label>
                             <input type="text" class="form-control" id="edit-branditemname" name="editbrandNameItem" aria-describedby="brandnameitem">
                           </div>
@@ -267,7 +281,7 @@
       </div>
     </div>
     <div class="col">
-      <h2>Monthly Load Consumption</h2>
+      <h2>Monthly Energy Consumption</h2>
       <form method="POST" id="yearChange">
         <div class="mb-3">
           <label for="change-year" class="form-label">Select Year</label>
@@ -468,7 +482,7 @@
     }
 
 
-    function getLoadItemForFilter() {
+    function getLoadTypeForFilter() {
       // get all dept
       $.ajax({
         url: '/allloaditem',
@@ -478,12 +492,12 @@
           var options = res['data']
   
           // Clear existing options (if any)
-          $('#load-item').empty();
+          $('#load-type').empty();
   
           // Append new options
-          $('#load-item').append($('<option>').text('All').attr('value', 'All'));
+          $('#load-type').append($('<option>').text('All').attr('value', 'All'));
           $.each(options, function(index, value) {
-            $('#load-item').append($('<option>').text(value).attr('value', value));
+            $('#load-type').append($('<option>').text(value).attr('value', value));
           });
   
           // allRooms($('#change-year').val())
@@ -495,8 +509,8 @@
     }
 
     
-    function getTableData(valToFilter=1.0, valToFilterItems='All') {
-      if (valToFilter == 1.0 && valToFilterItems == 'All') {
+    function getTableData(valToFilter=1.0, valToFilterItems='All', valToFilterDept='All') {
+      if (valToFilter == 1.0 && valToFilterItems == 'All' && valToFilterDept=='All') {
         $.get('/databasetable', function(data) {
             totalPowerLoss = 0
             var tableBody = $("tbody")
@@ -508,6 +522,7 @@
             $('<td>').text(itemData.deptName).appendTo(row);
             $('<td>').text(itemData.roomName).appendTo(row);
             $('<td>').text(itemData.item).appendTo(row);
+            $('<td>').text(itemData.loadtype).appendTo(row);
             $('<td>').text(itemData.brandNameItem).appendTo(row);
             $('<td>').text(itemData.loadNums).appendTo(row);
             $('<td>').text(itemData.ratingsEV).appendTo(row);
@@ -530,18 +545,20 @@
               var deptname = $(this).closest('tr').find('td:eq(0)').text();
               var roomname = $(this).closest('tr').find('td:eq(1)').text();
               var item = $(this).closest('tr').find('td:eq(2)').text();
-              var branditemname = $(this).closest('tr').find('td:eq(3)').text();
-              var loadnums = $(this).closest('tr').find('td:eq(4)').text();
-              var ratingsev = $(this).closest('tr').find('td:eq(5)').text();
-              var ratingsia = $(this).closest('tr').find('td:eq(6)').text();
-              var ratingspw = $(this).closest('tr').find('td:eq(7)').text();
-              var actualpw = $(this).closest('tr').find('td:eq(8)').text();
-              var usagefactor = $(this).closest('tr').find('td:eq(9)').text();
+              var loadtype = $(this).closest('tr').find('td:eq(3)').text();
+              var branditemname = $(this).closest('tr').find('td:eq(4)').text();
+              var loadnums = $(this).closest('tr').find('td:eq(5)').text();
+              var ratingsev = $(this).closest('tr').find('td:eq(6)').text();
+              var ratingsia = $(this).closest('tr').find('td:eq(7)').text();
+              var ratingspw = $(this).closest('tr').find('td:eq(8)').text();
+              var actualpw = $(this).closest('tr').find('td:eq(9)').text();
+              var usagefactor = $(this).closest('tr').find('td:eq(10)').text();
   
               $('#edit-name').val(name);
               $('#edit-dept-name').val(deptname);
               $('#edit-room-name').val(roomname);
               $('#edit-item').val(item);
+              $('#edit-loadtype').val(item);
               $('#edit-branditemname').val(branditemname);
               $('#edit-loadnums').val(parseInt(loadnums));
               $('#edit-ratingsev').val(parseFloat(ratingsev));
@@ -558,6 +575,7 @@
                   var updatedDeptName = $('#edit-dept-name').val();
                   var updatedRoomName = $('#edit-room-name').val();
                   var updatedItem = $('#edit-item').val();
+                  var updatedLoadType = $('#edit-load-type').val();
                   var updatedBrand = $('#edit-branditemname').val();
                   var updatedLoad = $('#edit-loadnums').val();
                   var updatedEV = $('#edit-ratingsev').val();
@@ -569,6 +587,7 @@
                       dept: updatedDeptName,
                       room: updatedRoomName,
                       item: updatedItem,
+                      loadtype: updatedLoadType,
                       brand: updatedBrand,
                       load: updatedLoad,
                       rateev: updatedEV,
@@ -599,7 +618,8 @@
         $.post('/databasetable',
           {
             val: valToFilter,
-            valToFilterItems: valToFilterItems
+            valToFilterItems: valToFilterItems,
+            valToFilterDept: valToFilterDept
           },
           function(data) {
             totalPowerLoss = 0
@@ -614,6 +634,7 @@
             $('<td>').text(itemData.deptName).appendTo(row);
             $('<td>').text(itemData.roomName).appendTo(row);
             $('<td>').text(itemData.item).appendTo(row);
+            $('<td>').text(itemData.loadtype).appendTo(row);
             $('<td>').text(itemData.brandNameItem).appendTo(row);
             $('<td>').text(itemData.loadNums).appendTo(row);
             $('<td>').text(itemData.ratingsEV).appendTo(row);
@@ -636,18 +657,20 @@
               var deptname = $(this).closest('tr').find('td:eq(0)').text();
               var roomname = $(this).closest('tr').find('td:eq(1)').text();
               var item = $(this).closest('tr').find('td:eq(2)').text();
-              var branditemname = $(this).closest('tr').find('td:eq(3)').text();
-              var loadnums = $(this).closest('tr').find('td:eq(4)').text();
-              var ratingsev = $(this).closest('tr').find('td:eq(5)').text();
-              var ratingsia = $(this).closest('tr').find('td:eq(6)').text();
-              var ratingspw = $(this).closest('tr').find('td:eq(7)').text();
-              var actualpw = $(this).closest('tr').find('td:eq(8)').text();
-              var usagefactor = $(this).closest('tr').find('td:eq(9)').text();
+              var loadType = $(this).closest('tr').find('td:eq(3)').text();
+              var branditemname = $(this).closest('tr').find('td:eq(4)').text();
+              var loadnums = $(this).closest('tr').find('td:eq(5)').text();
+              var ratingsev = $(this).closest('tr').find('td:eq(6)').text();
+              var ratingsia = $(this).closest('tr').find('td:eq(7)').text();
+              var ratingspw = $(this).closest('tr').find('td:eq(8)').text();
+              var actualpw = $(this).closest('tr').find('td:eq(9)').text();
+              var usagefactor = $(this).closest('tr').find('td:eq(10)').text();
   
               $('#edit-name').val(name);
               $('#edit-dept-name').val(deptname);
               $('#edit-room-name').val(roomname);
               $('#edit-item').val(item);
+              $('#edit-loadtype').val(item);
               $('#edit-branditemname').val(branditemname);
               $('#edit-loadnums').val(parseInt(loadnums));
               $('#edit-ratingsev').val(parseFloat(ratingsev));
@@ -664,6 +687,7 @@
                   var updatedDeptName = $('#edit-dept-name').val();
                   var updatedRoomName = $('#edit-room-name').val();
                   var updatedItem = $('#edit-item').val();
+                  var updatedLoadType = $('#edit-loadtype').val();
                   var updatedBrand = $('#edit-branditemname').val();
                   var updatedLoad = $('#edit-loadnums').val();
                   var updatedEV = $('#edit-ratingsev').val();
@@ -675,6 +699,7 @@
                       dept: updatedDeptName,
                       room: updatedRoomName,
                       item: updatedItem,
+                      item: updatedLoadType,
                       brand: updatedBrand,
                       load: updatedLoad,
                       rateev: updatedEV,
@@ -703,6 +728,29 @@
       }
     }
 
+    function getAllDeptFilter(){
+      $.ajax({
+        url: '/alldept',
+        method: 'GET',
+        success: function(res) {
+          // Assuming the response is an array of option values
+          var options = res['data']['all_dept']
+  
+          // Clear existing options (if any)
+          $('#department-filter').empty();
+  
+          // Append new options
+          $.each(options, function(index, value) {
+            $('#department-filter').append($('<option>').text(value).attr('value', value));
+          });
+  
+          // allRooms($('#change-year').val())
+        },
+        error: function(xhr, status, error) {
+          console.log(error)
+        }
+      })
+    }
     // UPDATE Request
     function updateData(id, data) { 
         $.ajax({
@@ -947,14 +995,16 @@
       // var formData = $(this).serialize()
       // console.log(formData)
       var rangeValue = $('#powerloss').val();
-      var filterLoadItem = $('#load-item').val()
+      var filterLoadType = $('#load-type').val()
+      var filterDept = $('#department_filter').val()
+      var filterLoadType = $('#load-type').val()
 
       console.log(filterLoadItem)
 
 
       console.log(parseFloat(rangeValue).toFixed(1))
 
-      getTableData(valToFilter = parseFloat(rangeValue).toFixed(1), valToFilterItem=filterLoadItem)
+      getTableData(valToFilter = parseFloat(rangeValue).toFixed(1), valToFilterItem=filterLoadItem, valToFilterDept = filterDept)
    
     });
 

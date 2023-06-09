@@ -19,6 +19,7 @@ class InputDataForm(FlaskForm):
     deptname = StringField('Department', validators=[InputRequired()])
     roomname = StringField('Room', validators=[InputRequired()])
     item = StringField('Item', validators=[InputRequired()])
+    loadtype = StringField('Load Type', validators=[InputRequired()])
     brandnameitem = StringField('Brand Name Item', validators=[InputRequired()])
     loadnums = IntegerField('Load Nums', validators=[InputRequired()])
     ratingsev = DecimalField('RatingsEV', validators=[InputRequired()])

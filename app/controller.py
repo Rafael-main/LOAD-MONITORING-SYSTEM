@@ -47,6 +47,7 @@ class MonitorLoad:
             department='None', 
             room='None', 
             item='None', 
+            loadtype='None', 
             brandNameItem='None', 
             loadNums=0, 
             ratingsEV=0, 
@@ -65,6 +66,7 @@ class MonitorLoad:
         self.department = department 
         self.room = room 
         self.item = item
+        self.loadtype = loadtype
         self.brandNameItem = brandNameItem 
         self.loadNums = loadNums
         self.ratingsEV = ratingsEV 
@@ -82,7 +84,8 @@ class MonitorLoad:
         totalRating = 0
         loadReqsDatabase = Load.query.all()
         for loadReq in loadReqsDatabase:
-            totalRating += int(loadReq.ratingspw)
+
+            totalRating += (int(loadReq.ratingspw) * int(loadReq.loadnums))
         return totalRating
     
     def totalSolarGenerate(self):
@@ -118,6 +121,8 @@ class MonitorLoad:
     
     def roomLoadPerDept(self, currDept=None, currDate=2023):
         try:
+            CONNECTED_LOAD_IIT = 3800
+            ACTUAL_ENERGY_CONSUMPTION_IIT = 368688
 
             loadInMonth = {
                 'January': 0,
@@ -140,35 +145,19 @@ class MonitorLoad:
                 convertStringToDatetime = datetime.datetime.strptime(stringDate, formatDatetime)
                 if convertStringToDatetime.year == currDate:
                     month = convertStringToDatetime.date().strftime('%B')
-                    loadInMonth[month] = loadInMonth[month] + load.ratingspw
-            # if currDept is None:
-            #     dept = Department.query.first()
-            # else:            
-            #     dept = Department.query.filter_by(deptname=currDept).first()
-            # for room in dept.roomkeyf:
-            #     roomCounterList = []
-            #     for load in room.loadkeyf:
-            #         stringDate = load.date
-            #         convertStringToDatetime = datetime.datetime.strptime(stringDate, formatDatetime)
-            #         if convertStringToDatetime.year == currDate:
 
-            #             month = convertStringToDatetime.date().strftime('%B')
-
-            #             loadInMonth[month] = loadInMonth[month] + load.ratingspw
-
-            #         loadCounter = 0
-            #         loadCounter += load.ratingspw
-            #         roomCounterList.append(loadCounter)
-            #     roomLabelList.append(room.roomname)
-            #     sumRoomLoad = sum(roomCounterList)
-            #     roomDataList.append(sumRoomLoad)
+                    loadInMonth[month] = loadInMonth[month] + (int(load.ratingspw) * int(load.loadnums))
+            
 
             roomDataList = list(loadInMonth.values())
+            for one in range(0, len(roomDataList)):
+                if roomDataList[one] != 0:
+                    roomDataList[one] = ((roomDataList[one] / CONNECTED_LOAD_IIT) / ACTUAL_ENERGY_CONSUMPTION_IIT)
             roomLabelList = list(loadInMonth.keys())
             print(roomDataList)
             print(roomLabelList)
             datasets = [{
-                'label': f'# of Load per {currDept}',
+                'label': f'# of Energy Consumption per {currDept} in KWh',
                 # 'data': [12.5],
                 'data': roomDataList,
                 'borderWidth': 1
@@ -249,6 +238,7 @@ class MonitorLoad:
                 # uuid load
                 uuid=self.loadUUID,
                 item=self.item,
+                loadtype=self.loadtype,
                 brandnametitem=self.brandNameItem,
                 loadnums=int(self.loadNums),
                 ratingsev=float(self.ratingsEV),
@@ -272,20 +262,21 @@ class MonitorLoad:
         except:
             return 'not working'
 
-    def databaseTable(self, value=1.0, valLoadItem='All'):
+    def databaseTable(self, value=1.0, valLoadType='All', valLoadDept='All'):
         allRecords = Department.query.all()
         allRecordsList = []
-        print('model database table', valLoadItem)
+        print('model database table', valLoadType)
         for rec in allRecords:
             for room in rec.roomkeyf:
                 for load in room.loadkeyf:
-                    if valLoadItem == 'All':
+                    if valLoadType == 'All' and valLoadDept == 'All':
                         if load.usagefactor <= value:
                             allRecordsList.append({
                                 '_id': load.id,
                                 'deptName': rec.deptname,
                                 'roomName': room.roomname,
                                 'item' : load.item,
+                                'loadtype': load.loadtype,
                                 'brandNameItem' : load.brandnametitem ,
                                 'loadNums' : load.loadnums,
                                 'ratingsEV' : load.ratingsev,
@@ -295,12 +286,13 @@ class MonitorLoad:
                                 'usageFactor' : load.usagefactor
                             })
                     else:
-                        if load.usagefactor <= value and load.item == valLoadItem:
+                        if load.usagefactor <= value and load.item == valLoadType and valLoadDept == rec.deptName:
                             allRecordsList.append({
                                 '_id': load.id,
                                 'deptName': rec.deptname,
                                 'roomName': room.roomname,
                                 'item' : load.item,
+                                'loadtype': load.loadtype,
                                 'brandNameItem' : load.brandnametitem ,
                                 'loadNums' : load.loadnums,
                                 'ratingsEV' : load.ratingsev,
@@ -309,6 +301,38 @@ class MonitorLoad:
                                 'actualPW' : load.actualpw,
                                 'usageFactor' : load.usagefactor
                             })
+                        if valLoadType == 'All':
+                            if load.usagefactor <= value and rec.deptName == valLoadDept:
+                                allRecordsList.append({
+                                    '_id': load.id,
+                                    'deptName': rec.deptname,
+                                    'roomName': room.roomname,
+                                    'item' : load.item,
+                                    'loadtype': load.loadtype,
+                                    'brandNameItem' : load.brandnametitem ,
+                                    'loadNums' : load.loadnums,
+                                    'ratingsEV' : load.ratingsev,
+                                    'ratingsIA' : load.ratingsia,
+                                    'ratingsPW' : load.ratingspw,
+                                    'actualPW' : load.actualpw,
+                                    'usageFactor' : load.usagefactor
+                                })
+                        if valLoadDept == 'All':
+                            if load.usagefactor <= value and load.item == valLoadType:
+                                allRecordsList.append({
+                                    '_id': load.id,
+                                    'deptName': rec.deptname,
+                                    'roomName': room.roomname,
+                                    'item' : load.item,
+                                    'loadtype': load.loadtype,
+                                    'brandNameItem' : load.brandnametitem ,
+                                    'loadNums' : load.loadnums,
+                                    'ratingsEV' : load.ratingsev,
+                                    'ratingsIA' : load.ratingsia,
+                                    'ratingsPW' : load.ratingspw,
+                                    'actualPW' : load.actualpw,
+                                    'usageFactor' : load.usagefactor
+                                })
 
         return allRecordsList
 
@@ -333,6 +357,7 @@ class MonitorLoad:
         try:
             updateRecord = Load.query.filter_by(id=id).first()
             updateRecord.item = self.item
+            updateRecord.loadtype=self.loadtype
             updateRecord.brandnametitem = self.brandNameItem
             updateRecord.loadnums = self.loadNums
             updateRecord.ratingsev = self.ratingsEV
@@ -354,7 +379,7 @@ class MonitorLoad:
         except:
             return 'something went wrong.'
         
-    def getAllLoadItem(self):
+    def getAllLoadType(self):
         try:
             loadItemsData = []
             loadItems = Load.query.all()
