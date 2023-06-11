@@ -20,7 +20,7 @@
               
               <form method="POST" id="add-solar">
                 <div class="mb-3">
-                  <label for="add-solar-data" class="form-label">Add Solar</label>
+                  <label for="add-solar-data" class="form-label">Ratings P(W)</label>
                   <input name="addSolarData" id="add-solar-data" class="form-control mb-3">
                   <label for="add-solar-month-data" class="form-label">Month</label>
                   <input type="date" name="addSolarMonthData" id="add-solar-month-data" class="form-control mb-3">
@@ -58,13 +58,13 @@
                 </div>
                 <div class="mb-3">
                   <label for="load-type" class="form-label">Load Type</label>
-                  <select name="loadItem" id="load-type" class="form-select" aria-label="load item">
+                  <select name="loadItem" id="load-type" class="form-select" aria-label="load type filter">
                     <!-- <option value="All" selected></option> -->
                   </select>
                 </div>
                 <div class="mb-3">
-                  <label for="department-filter" class="form-label"></label>
-                  <select name="departmentFilter" id="department-filter " class="form-select" aria-label="load item">
+                  <label for="department-filter" class="form-label">Department</label>
+                  <select name="departmentFilter" id="department-filter" class="form-select" aria-label="dept filter">
                     <!-- <option value="All" selected></option> -->
                   </select>
                 </div>
@@ -95,11 +95,11 @@
                 <form id="addrecord">
                   <div class="mb-3">
                     <label for="addDate" class="form-label">Date</label>
-                    <input name="addDateTo" value="2023-5-1" type="date" class="form-control" id="addDate" name="fullDate" aria-describedby="date">
+                    <input name="addDateTo" value="2023-5-1" type="date" class="form-control" id="addDate" name="fullDate" aria-describedby="date" required>
                   </div>
                   <div class="mb-3">
                     <label for="addDeptname" class="form-label">Department</label>
-                    <select name="department" id="addDeptname" class="form-select" aria-label="select dept">
+                    <select name="department" id="addDeptname" class="form-select" aria-label="select dept" required>
                       <option selected>---</option>
                       <option value="DEET">Department of Electrical Engineering and Technology (DEET)</option>
                       <option value="DCET">Department of Civil Engineering and Technology (DCET)</option>
@@ -110,43 +110,43 @@
                   </div>
                   <div class="mb-3">
                     <label for="roomName" class="form-label">Room Name</label>
-                    <input value="None" type="text" class="form-control" id="roomName" name="room" aria-describedby="roomname">
+                    <input value="None" type="text" class="form-control" id="roomName" name="room" aria-describedby="roomname" required>
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="itemm">Item</label>
-                    <input value="None" type="text" class="form-control" id="itemm" name="item" aria-describedby="item">
+                    <input value="None" type="text" class="form-control" id="itemm" name="item" aria-describedby="item" required>
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="load-type">Load Type</label>
-                    <input value="None" type="text" class="form-control" id="load-type" name="loadtype" aria-describedby="load type">
+                    <input value="None" type="text" class="form-control" id="load-type" name="loadtype" aria-describedby="load type" required>
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="brandnameitemm">Brand Name Item</label>
-                    <input value="None "type="text" class="form-control" id="brandnameitemm" name="brandNameItem" aria-describedby="brandnameitem">
+                    <input value="None "type="text" class="form-control" id="brandnameitemm" name="brandNameItem" aria-describedby="brandnameitem" required>
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="loadnumss"># of Load</label>
-                    <input value=0 type="number" class="form-control" step="1" id="loadnumss" name="loadNums">
+                    <input value=0 type="number" class="form-control" step="1" id="loadnumss" name="loadNums" required>
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="ratingsevv">Ratings E(V)</label>
-                    <input value=0 type="number" class="form-control" step="0.01" id="ratingsevv" name="ratingsEV">
+                    <input value=0 type="number" class="form-control" step="0.01" id="ratingsevv" name="ratingsEV" required>
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="ratingsiaa">Ratings I(A)</label>
-                    <input value=0 type="number" class="form-control" step="0.01" id="ratingsiaa" name="ratingsIA">
+                    <input value=0 type="number" class="form-control" step="0.01" id="ratingsiaa" name="ratingsIA" required>
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="ratingspww">Ratings P(W)</label>
-                    <input value=0 type="number" class="form-control" step="0.01" id="ratingspww" name="ratingsPW">
+                    <input value=0 type="number" class="form-control" step="0.01" id="ratingspww" name="ratingsPW" required>
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="actualpww">Actual P(W)</label>
-                    <input value=0 type="number" class="form-control" step="0.01" id="actualpww" name="actualPW">
+                    <input value=0 type="number" class="form-control" step="0.01" id="actualpww" name="actualPW" required>
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="usagefactorr">Usage Factor</label>
-                    <input value=0 type="number" class="form-control" step="0.01" id="usagefactorr" name="usageFactor">
+                    <input value=0 type="number" class="form-control" step="0.01" id="usagefactorr" name="usageFactor" required>
                   </div>
 
                   <button type="submit" class="btn btn-danger">Add record</button>
@@ -177,6 +177,7 @@
                     <th scope="col">Department Name</th>
                     <th scope="col">Room Name</th>
                     <th scope="col">Load</th>
+                    <th scope="col">Load Type</th>
                     <th scope="col">Brand Item Load</th>
                     <th scope="col"># of Load</th>
                     <th scope="col">Ratings E(V)</th>
@@ -485,7 +486,7 @@
     function getLoadTypeForFilter() {
       // get all dept
       $.ajax({
-        url: '/allloaditem',
+        url: '/allloadtype',
         method: 'GET',
         success: function(res) {
           // Assuming the response is an array of option values
@@ -738,13 +739,14 @@
   
           // Clear existing options (if any)
           $('#department-filter').empty();
-  
+          
+
+          $('#department-filter').append($('<option>').text('ALL').attr('value', 'ALL'));
           // Append new options
           $.each(options, function(index, value) {
             $('#department-filter').append($('<option>').text(value).attr('value', value));
           });
   
-          // allRooms($('#change-year').val())
         },
         error: function(xhr, status, error) {
           console.log(error)
@@ -787,6 +789,8 @@
               getTotalWattage()  
               getDept()
               getYears()
+              getLoadTypeForFilter()
+              getAllDeptFilter()
             },
             error: function(error) {
                 console.log('Error:', error);
@@ -833,15 +837,6 @@
       getDateDataChart(selectedValue)
     });
     
-    // $('#change-month').change(function() {
-    //   var selectedValue = $(this).val();
-    //   var selectedYearVal = $('#change-year').val()
-    //   console.log(selectedYearVal)
-    //   console.log('Selected value:', selectedValue);
-    //   // allRooms(selectedValue)
-    //   getDateDataChart(selectedValue, selectedYearVal)
-
-    // });
     $('#change-year').change(function() {
       var selectedValue = $(this).val();
       console.log('Selected value:', selectedValue);
@@ -891,7 +886,6 @@
             $('#change-year').append($('<option>').text(value).attr('value', value));
           });
   
-          // allRooms($('#change-year').val())
         },
         error: function(xhr, status, error) {
           console.log(error)
@@ -943,7 +937,9 @@
             getTotalSolarGenerated()
             getTotalWattage()  
             getDept()
-            getYears()
+            getYears() 
+            getLoadTypeForFilter()
+            getAllDeptFilter()
             
             
           }
@@ -996,8 +992,7 @@
       // console.log(formData)
       var rangeValue = $('#powerloss').val();
       var filterLoadType = $('#load-type').val()
-      var filterDept = $('#department_filter').val()
-      var filterLoadType = $('#load-type').val()
+      var filterDept = $('#department-filter').val()
 
       console.log(filterLoadItem)
 
@@ -1015,7 +1010,8 @@
     getTotalWattage()  
     getDept()
     getYears() 
-    getLoadItemForFilter()
+    getLoadTypeForFilter()
+    getAllDeptFilter()
   })
 
 

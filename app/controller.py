@@ -113,6 +113,9 @@ class MonitorLoad:
         allYears = []
         recordLoadAllYears = Load.query.all()
         for strYear in  recordLoadAllYears:
+            print(strYear.date)
+            if strYear.date == '' or strYear == None:
+                continue
             date = datetime.datetime.strptime(strYear.date, formatYear)
             yearNum = date.year
             allYears.append(yearNum)
@@ -142,6 +145,8 @@ class MonitorLoad:
             allLoad = Load.query.all()
             for load in allLoad:
                 stringDate = load.date
+                if stringDate == '' or stringDate == None:
+                    continue
                 convertStringToDatetime = datetime.datetime.strptime(stringDate, formatDatetime)
                 if convertStringToDatetime.year == currDate:
                     month = convertStringToDatetime.date().strftime('%B')
@@ -151,8 +156,9 @@ class MonitorLoad:
 
             roomDataList = list(loadInMonth.values())
             for one in range(0, len(roomDataList)):
-                if roomDataList[one] != 0:
-                    roomDataList[one] = ((roomDataList[one] / CONNECTED_LOAD_IIT) / ACTUAL_ENERGY_CONSUMPTION_IIT)
+                if roomDataList[one] == 0:
+                    continue
+                roomDataList[one] = ((roomDataList[one] / CONNECTED_LOAD_IIT) / ACTUAL_ENERGY_CONSUMPTION_IIT)
             roomLabelList = list(loadInMonth.keys())
             print(roomDataList)
             print(roomLabelList)
@@ -175,6 +181,8 @@ class MonitorLoad:
     def departmentLoad(self):
 
         # TOTAL RATING P (W)
+        CONNECTED_LOAD_IIT = 3800
+        ACTUAL_ENERGY_CONSUMPTION_IIT = 368688
 
         deptDataList = []
         deptLabelList = []
@@ -203,6 +211,11 @@ class MonitorLoad:
             deptLabelList.append(key)
         for value in totalLoad.values():
             deptDataList.append(value)
+
+        for data in range(0, len(deptDataList)):
+            if deptDataList[data] == 0:
+                continue
+            deptDataList[data] = ((deptDataList[data] / CONNECTED_LOAD_IIT) / ACTUAL_ENERGY_CONSUMPTION_IIT)
         labels = deptLabelList
         data = [
             {
