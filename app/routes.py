@@ -247,7 +247,8 @@ def databasetable():
         if request.method == 'POST':
             value = request.form.get('val')
             valueLoadItem = request.form.get('valToFilterItems')
-            databaseTable = monitorLoad.databaseTable(value=float(value),valLoadItem=str(valueLoadItem))
+            valueDept = request.form.get('valToFilterDept')
+            databaseTable = monitorLoad.databaseTable(value=float(value),valLoadType=str(valueLoadItem), valLoadDept=str(valueDept))
             return jsonify({'status': 'ok', 'data': {'database_table': databaseTable}})
         else:
             databaseTable = monitorLoad.databaseTable()

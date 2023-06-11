@@ -993,13 +993,11 @@
       var rangeValue = $('#powerloss').val();
       var filterLoadType = $('#load-type').val()
       var filterDept = $('#department-filter').val()
-
-      console.log(filterLoadItem)
-
+      console.log(filterLoadType)
 
       console.log(parseFloat(rangeValue).toFixed(1))
 
-      getTableData(valToFilter = parseFloat(rangeValue).toFixed(1), valToFilterItem=filterLoadItem, valToFilterDept = filterDept)
+      getTableData(valToFilter = parseFloat(rangeValue).toFixed(1), valToFilterItems=filterLoadType, valToFilterDept = filterDept)
    
     });
 

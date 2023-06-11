@@ -299,7 +299,7 @@ class MonitorLoad:
                                 'usageFactor' : load.usagefactor
                             })
                     else:
-                        if load.usagefactor <= value and load.item == valLoadType and valLoadDept == rec.deptName:
+                        if load.usagefactor <= value and load.item == valLoadType and valLoadDept == rec.deptname:
                             allRecordsList.append({
                                 '_id': load.id,
                                 'deptName': rec.deptname,
@@ -315,7 +315,7 @@ class MonitorLoad:
                                 'usageFactor' : load.usagefactor
                             })
                         if valLoadType == 'All':
-                            if load.usagefactor <= value and rec.deptName == valLoadDept:
+                            if load.usagefactor <= value and rec.deptname == valLoadDept:
                                 allRecordsList.append({
                                     '_id': load.id,
                                     'deptName': rec.deptname,
