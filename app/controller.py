@@ -124,7 +124,7 @@ class MonitorLoad:
     
     def roomLoadPerDept(self, currDept=None, currDate=2023):
         try:
-            CONNECTED_LOAD_IIT = 3800
+            CONNECTED_LOAD_IIT = 4482.39
             ACTUAL_ENERGY_CONSUMPTION_IIT = 368688
 
             loadInMonth = {
@@ -158,12 +158,12 @@ class MonitorLoad:
             for one in range(0, len(roomDataList)):
                 if roomDataList[one] == 0:
                     continue
-                roomDataList[one] = ((roomDataList[one] / CONNECTED_LOAD_IIT) / ACTUAL_ENERGY_CONSUMPTION_IIT)
+                roomDataList[one] = ((roomDataList[one] / CONNECTED_LOAD_IIT) * ACTUAL_ENERGY_CONSUMPTION_IIT)
             roomLabelList = list(loadInMonth.keys())
             print(roomDataList)
             print(roomLabelList)
             datasets = [{
-                'label': f'# of Energy Consumption per {currDept} in KWh',
+                'label': f'Monthly Consumption {currDate} in kWH',
                 # 'data': [12.5],
                 'data': roomDataList,
                 'borderWidth': 1
@@ -181,7 +181,7 @@ class MonitorLoad:
     def departmentLoad(self):
 
         # TOTAL RATING P (W)
-        CONNECTED_LOAD_IIT = 3800
+        CONNECTED_LOAD_IIT = 4482.39
         ACTUAL_ENERGY_CONSUMPTION_IIT = 368688
 
         deptDataList = []
@@ -215,7 +215,8 @@ class MonitorLoad:
         for data in range(0, len(deptDataList)):
             if deptDataList[data] == 0:
                 continue
-            deptDataList[data] = ((deptDataList[data] / CONNECTED_LOAD_IIT) / ACTUAL_ENERGY_CONSUMPTION_IIT)
+            deptDataList[data] = ((deptDataList[data] / CONNECTED_LOAD_IIT) * ACTUAL_ENERGY_CONSUMPTION_IIT)
+        print(deptDataList)
         labels = deptLabelList
         data = [
             {

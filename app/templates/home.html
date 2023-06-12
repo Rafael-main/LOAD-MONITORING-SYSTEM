@@ -511,6 +511,7 @@
     }
 
     
+    
     function getTableData(valToFilter=1.0, valToFilterItems='All', valToFilterDept='All') {
       if (valToFilter == 1.0 && valToFilterItems == 'All' && valToFilterDept=='All') {
         $.get('/databasetable', function(data) {
@@ -519,7 +520,7 @@
             $(tableBody).empty();
             var tableData = data['data']['database_table']
             $.each(tableData, function(index, itemData) {
-            totalPowerLoss += itemData.ratingsPW
+            totalPowerLoss += (parseFloat(itemData.ratingsPW) * parseFloat(itemData.loadNums))
             var row = $('<tr>').appendTo(tableBody);
             $('<td>').text(itemData.deptName).appendTo(row);
             $('<td>').text(itemData.roomName).appendTo(row);
