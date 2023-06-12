@@ -214,8 +214,8 @@
                             <input type="text" class="form-control" id="edit-item" name="edititem" aria-describedby="item">
                           </div>
                           <div class="mb-3">
-                            <label class="form-label" for="edit-load-type">Load Type</label>
-                            <input value="None" type="text" class="form-control" id="edit-load-type" name="editloadtype" aria-describedby="editloadtype">
+                            <label class="form-label" for="edit-loadtype">Load Type</label>
+                            <input value="None" type="text" class="form-control" id="edit-loadtype" name="editloadtype" aria-describedby="editloadtype">
                           </div>
                           <div class="mb-3">
                             <label class="form-label" for="edit-branditemname">Brand Name Item</label>
@@ -414,8 +414,9 @@
         }
       })
     }
-    function getDateDataChart(year) {
+    function getDateDataChart(year=2023) {
       var data = {year:year}
+      console.log(data)
       $.ajax({
         url:'/roomdata',
         method:'POST',
@@ -559,7 +560,7 @@
               $('#edit-dept-name').val(deptname);
               $('#edit-room-name').val(roomname);
               $('#edit-item').val(item);
-              $('#edit-loadtype').val(item);
+              $('#edit-loadtype').val(loadtype);
               $('#edit-branditemname').val(branditemname);
               $('#edit-loadnums').val(parseInt(loadnums));
               $('#edit-ratingsev').val(parseFloat(ratingsev));
@@ -567,7 +568,7 @@
               $('#edit-ratingspw').val(parseFloat(ratingspw));
               $('#edit-actualpw').val(parseFloat(actualpw));
               $('#edit-usagefactor').val(parseFloat(usagefactor));
-  
+              console.log(loadtype)
               $('#editModal').modal('show');
   
               $('#edit-form').on('submit', function(event) {
@@ -576,7 +577,7 @@
                   var updatedDeptName = $('#edit-dept-name').val();
                   var updatedRoomName = $('#edit-room-name').val();
                   var updatedItem = $('#edit-item').val();
-                  var updatedLoadType = $('#edit-load-type').val();
+                  var updatedLoadType = $('#edit-loadtype').val();
                   var updatedBrand = $('#edit-branditemname').val();
                   var updatedLoad = $('#edit-loadnums').val();
                   var updatedEV = $('#edit-ratingsev').val();
@@ -666,12 +667,14 @@
               var ratingspw = $(this).closest('tr').find('td:eq(8)').text();
               var actualpw = $(this).closest('tr').find('td:eq(9)').text();
               var usagefactor = $(this).closest('tr').find('td:eq(10)').text();
-  
+
+
+              console.log(loadType)
               $('#edit-name').val(name);
               $('#edit-dept-name').val(deptname);
               $('#edit-room-name').val(roomname);
               $('#edit-item').val(item);
-              $('#edit-loadtype').val(item);
+              $('#edit-loadtype').val(loadType);
               $('#edit-branditemname').val(branditemname);
               $('#edit-loadnums').val(parseInt(loadnums));
               $('#edit-ratingsev').val(parseFloat(ratingsev));
@@ -700,7 +703,7 @@
                       dept: updatedDeptName,
                       room: updatedRoomName,
                       item: updatedItem,
-                      item: updatedLoadType,
+                      loadtype: updatedLoadType,
                       brand: updatedBrand,
                       load: updatedLoad,
                       rateev: updatedEV,
@@ -755,13 +758,16 @@
     }
     // UPDATE Request
     function updateData(id, data) { 
+        var currYear = $('#change-year').val()
+        console.log('qqqqqqqqqqqqqqqqq')
+        console.log(data)
         $.ajax({
             url: '/updateload/' + id,
             type: 'PUT',
             data: JSON.stringify(data),
             contentType: 'application/json',
             success: function(response) {
-              getDateDataChart()
+              getDateDataChart(currYear)
               getDeptDataChart()
               getTableData()
               getTotalSolarGenerated()
@@ -777,12 +783,13 @@
 
     // DELETE Request
     function deleteData(id) {
+        var currYear = $('#change-year').val()
         $.ajax({
             url: '/deleteload/' + id,
             type: 'DELETE',
             success: function(response) {
               console.log(response.message);
-              getDateDataChart()
+              getDateDataChart(currYear)
               getDeptDataChart()
               getTableData()
               getTotalSolarGenerated()
@@ -920,7 +927,7 @@
 
       var formData = $(this).serialize();
       // var formData = new FormData(
-
+      var currYear = $('#change-year').val()
 
       $.ajax({
         url: '/addrecordfor', // Replace with the Flask endpoint URL
@@ -931,7 +938,7 @@
           showSuccessAlert('Record Added to Database');
           
           if (response['status'] === 'ok') {
-            getDateDataChart()
+            getDateDataChart(currYear)
             getDeptDataChart()
             getTableData()
             getTotalSolarGenerated()
@@ -1001,7 +1008,7 @@
    
     });
 
-    // getDateDataChart()
+    getDateDataChart()
     getDeptDataChart()
     getTableData()
     getTotalSolarGenerated()
