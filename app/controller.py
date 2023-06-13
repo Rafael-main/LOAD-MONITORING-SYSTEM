@@ -151,7 +151,7 @@ class MonitorLoad:
                 if convertStringToDatetime.year == currDate:
                     month = convertStringToDatetime.date().strftime('%B')
 
-                    loadInMonth[month] = loadInMonth[month] + (int(load.ratingspw) * int(load.loadnums))
+                    loadInMonth[month] = loadInMonth[month] + (float(load.ratingspw) * float(load.loadnums))
             
 
             roomDataList = list(loadInMonth.values())
