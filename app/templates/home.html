@@ -130,23 +130,23 @@
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="ratingsevv">Ratings E(V)</label>
-                    <input value=0 type="number" class="form-control" step="0.01" id="ratingsevv" name="ratingsEV" required>
+                    <input value=0 type="number" step="0.01" class="form-control" step="0.01" id="ratingsevv" name="ratingsEV" required>
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="ratingsiaa">Ratings I(A)</label>
-                    <input value=0 type="number" class="form-control" step="0.01" id="ratingsiaa" name="ratingsIA" required>
+                    <input value=0 type="number" step="0.01" class="form-control" step="0.01" id="ratingsiaa" name="ratingsIA" required>
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="ratingspww">Ratings P(W)</label>
-                    <input value=0 type="number" class="form-control" step="0.01" id="ratingspww" name="ratingsPW" required>
+                    <input value=0 type="number" step="0.01" class="form-control" step="0.01" id="ratingspww" name="ratingsPW" required>
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="actualpww">Actual P(W)</label>
-                    <input value=0 type="number" class="form-control" step="0.01" id="actualpww" name="actualPW" required>
+                    <input value=0 type="number" step="0.01" class="form-control" step="0.01" id="actualpww" name="actualPW" required>
                   </div>
                   <div class="mb-3">
                     <label class="form-label" for="usagefactorr">Usage Factor</label>
-                    <input value=0 type="number" class="form-control" step="0.01" id="usagefactorr" name="usageFactor" required>
+                    <input value=0 type="number" step="0.01"   class="form-control" step="0.01" id="usagefactorr" name="usageFactor" required>
                   </div>
 
                   <button type="submit" class="btn btn-danger">Add record</button>
@@ -227,23 +227,23 @@
                           </div>
                           <div class="mb-3">
                             <label class="form-label" for="edit-ratingsev">Ratings E(V)</label>
-                            <input type="number" class="form-control" step="0.01" id="edit-ratingsev" name="editratingsEV">
+                            <input type="number" step="0.01" class="form-control" step="0.01" id="edit-ratingsev" name="editratingsEV">
                           </div>
                           <div class="mb-3">
                             <label class="form-label" for="edit-ratingsia">Ratings I(A)</label>
-                            <input type="number" class="form-control" step="0.01" id="edit-ratingsia" name="editratingsIA">
+                            <input type="number" step="0.01" class="form-control" step="0.01" id="edit-ratingsia" name="editratingsIA">
                           </div>
                           <div class="mb-3">
                             <label class="form-label" for="edit-ratingspw">Ratings P(W)</label>
-                            <input type="number" class="form-control" step="0.01" id="edit-ratingspw" name="editratingsPW">
+                            <input type="number" step="0.01" class="form-control" step="0.01" id="edit-ratingspw" name="editratingsPW">
                           </div>
                           <div class="mb-3">
                             <label class="form-label" for="edit-actualpw">Actual P(W)</label>
-                            <input type="number" class="form-control" step="0.01" id="edit-actualpw" name="editactualPW">
+                            <input type="number" step="0.01" class="form-control" step="0.01" id="edit-actualpw" name="editactualPW">
                           </div>
                           <div class="mb-3">
                             <label class="form-label" for="edit-usagefactor">Usage Factor</label>
-                            <input type="number" class="form-control" step="0.01" id="edit-usagefactor" name="editusageFactor">
+                            <input type="number" step="0.01" class="form-control" step="0.01" id="edit-usagefactor" name="editusageFactor">
                           </div>
                           <button type="submit" class="btn btn-danger">Submit</button>
                         </form>
@@ -387,7 +387,7 @@
         method: 'GET',
         success: function(res) {
           var wattageData = res['data']['total_wattage']
-          $('#totalwattage').text(`${(parseFloat(wattageData) / 1000)} KW`)
+          $('#totalwattage').text(`${parseFloat((wattageData / 1000)).toFixed(3)} KW`)
         },
         error: function(xhr, status, error) {
           console.log(error)
@@ -615,7 +615,7 @@
               console.log('Delete button clicked for ID:', id);
             });
 
-            $('#totalpowerloss').text(`${(parseFloat(totalPowerLoss) / 1000)} KW`);
+            $('#totalpowerloss').text(`${(parseFloat(totalPowerLoss) / 1000).toFixed(3)} KW`);
         });
       } else {
         $.post('/databasetable',

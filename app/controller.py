@@ -85,7 +85,7 @@ class MonitorLoad:
         loadReqsDatabase = Load.query.all()
         for loadReq in loadReqsDatabase:
 
-            totalRating += (int(loadReq.ratingspw) * int(loadReq.loadnums))
+            totalRating += (float(loadReq.ratingspw) * float(loadReq.loadnums))
         return totalRating
     
     def totalSolarGenerate(self):
