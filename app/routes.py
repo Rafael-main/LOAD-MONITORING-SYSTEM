@@ -8,6 +8,7 @@ from app.forms import LoginForm, SignUpForm, InputDataForm, FilterForm
 import uuid
 from datetime import datetime
 import json
+import pandas as pd
 
 
 @app.route('/')
@@ -369,3 +370,73 @@ def allloadtype():
     else:
         # return jsonify({'status': 'not_ok'})
         return redirect(url_for('authenticate'))
+
+
+@app.route('/uploadrecords', methods=['POST'])
+def uploadrecords():
+    csv_file = request.files['csvFile']
+   
+    # csv_file.save('uploads/' + csv_file.filename)
+    df = pd.read_csv(csv_file)
+
+    print(df)
+    for index, row in df.iterrows():
+        deptUUID= f'dept-{str(uuid.uuid4())[:5]}'
+        roomUUID= f'room-{str(uuid.uuid4())[:5]}'
+        loadUUID= f'load-{str(uuid.uuid4())[:5]}'
+
+
+        print(row['Room'])
+
+        department=row['DEPARTMENT/CATEGORY']
+        room=row['ROOM NO.']
+        item=row['LOAD']
+        loadtype=row['BRAND']
+        brandNameItem=row['BRAND']
+        loadNums=row['NO. OF LOADS'], 
+        ratingsEV=row['RATING E (V)'], 
+        ratingsIA=row['RATING I (A)'], 
+        ratingsPW=row['RATING P (W)'], 
+        actualPW=row['ACTUAL P (W)'], 
+        usageFactor=row['Usage Factor in 7 days'],
+        loaddate=row['Date (MM/DD/YY)']
+
+        print(f'''
+              {loadUUID}=loadUUID,
+              {roomUUID}=roomUUID,
+        #     {deptUUID}=deptUUID,
+        #     {department}= department,
+        #     {room}=room, 
+        #     {item}=item, 
+        #     {loadtype}=loadtype,
+        #     {brandNameItem}=brandnameitem, 
+        #     {loadNums}=loadNums, 
+        #     {float(ratingsEV[0])}=ratingsEV, 
+        #     {float(ratingsIA[0])}=ratingsIA, 
+        #     {float(ratingsPW[0])}=ratingsPW, 
+        #     {float(actualPW[0])}=actualPW, 
+        #     {float(usageFactor[0])}=usageFactor,
+        #     {loaddate}=dateDate 
+              ''')
+
+        # monitorLoadController = MonitorLoad(
+        #     loadUUID=loadUUID,
+        #     roomUUID=roomUUID,
+        #     deptUUID=deptUUID,
+        #     department= department,
+        #     room=room, 
+        #     item=item, 
+        #     loadtype=loadtype,
+        #     brandNameItem=brandnameitem, 
+        #     loadNums=loadNums, 
+        #     ratingsEV=ratingsEV, 
+        #     ratingsIA=ratingsIA, 
+        #     ratingsPW=ratingsPW, 
+        #     actualPW=actualPW, 
+        #     usageFactor=usageFactor,
+        #     loaddate=dateDate
+        # )
+        #         # add records
+        # monitorLoadController.loadInfoInput()  
+
+    return 'File uploaded successfully'

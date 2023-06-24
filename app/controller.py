@@ -158,7 +158,7 @@ class MonitorLoad:
             for one in range(0, len(roomDataList)):
                 if roomDataList[one] == 0:
                     continue
-                roomDataList[one] = ((roomDataList[one] / CONNECTED_LOAD_IIT) * ACTUAL_ENERGY_CONSUMPTION_IIT)
+                roomDataList[one] = (((roomDataList[one] / CONNECTED_LOAD_IIT) * ACTUAL_ENERGY_CONSUMPTION_IIT) / 1000)
             roomLabelList = list(loadInMonth.keys())
             print(roomDataList)
             print(roomLabelList)
@@ -215,7 +215,7 @@ class MonitorLoad:
         for data in range(0, len(deptDataList)):
             if deptDataList[data] == 0:
                 continue
-            deptDataList[data] = ((deptDataList[data] / CONNECTED_LOAD_IIT) * ACTUAL_ENERGY_CONSUMPTION_IIT)
+            deptDataList[data] = (((deptDataList[data] / CONNECTED_LOAD_IIT) * ACTUAL_ENERGY_CONSUMPTION_IIT) / 1000)
         print(deptDataList)
         labels = deptLabelList
         data = [

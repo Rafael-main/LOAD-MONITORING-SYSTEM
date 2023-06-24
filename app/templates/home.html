@@ -261,6 +261,35 @@
           </div>
         </div>
       </div>
+      <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#addCSVModal">
+        Import CSV
+      </button>
+
+      <div class="modal fade" id="addCSVModal" tabindex="-1" aria-labelledby="addCSVModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="addCSVModalLabel">Import CSV</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              
+              <!-- <form method="POST" id="add-csv">
+                <div class="mb-3">
+                  <input type="file" id="csvFileInput">
+                </div>
+                
+                <button type="submit" id="uploadButton" class="btn btn-danger">Submit</button>
+              </form> -->
+
+              <input type="file" id="csvFileInput">
+              <button type="submit" id="uploadButton" class="btn btn-danger">Submit</button>
+            </div>
+            <div class="modal-footer">
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 </div>
 <div class="container text-center">
@@ -394,7 +423,7 @@
         }
       })
     }
-
+ 
     // function addSolarGenerated(data) {
     //   $.ajax({
     //     url: ''
@@ -1007,6 +1036,30 @@
 
       getTableData(valToFilter = parseFloat(rangeValue).toFixed(1), valToFilterItems=filterLoadType, valToFilterDept = filterDept)
    
+    });
+
+
+    $('#uploadButton').click(function() {
+      var fileInput = document.getElementById('csvFileInput');
+      var file = fileInput.files[0];
+      var formData = new FormData();
+      formData.append('csvFile', file);
+
+      $.ajax({
+        url: '/uploadrecords',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+          // Handle the response from the server
+          console.log(response);
+        },
+        error: function(xhr, status, error) {
+          // Handle the error
+          console.error(error);
+        }
+      });
     });
 
     getDateDataChart()
