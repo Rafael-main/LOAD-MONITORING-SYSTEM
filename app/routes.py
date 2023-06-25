@@ -391,7 +391,7 @@ def uploadrecords():
         department=row['DEPARTMENT/CATEGORY']
         room=row['ROOM NO.']
         item=row['LOAD']
-        loadtype=row['BRAND']
+        loadtype=row['LOAD TYPE']
         brandNameItem=row['BRAND']
         loadNums=row['NO. OF LOADS'], 
         ratingsEV=row['RATING E (V)'], 
@@ -399,7 +399,7 @@ def uploadrecords():
         ratingsPW=row['RATING P (W)'], 
         actualPW=row['ACTUAL P (W)'], 
         usageFactor=row['Usage Factor in 7 days'],
-        loaddate=row['Date (MM/DD/YY)']
+        loaddate=row['Date (YY-MM-DD)']
 
         print(f'''
               {loadUUID}=loadUUID,
@@ -410,7 +410,7 @@ def uploadrecords():
         #     {item}=item, 
         #     {loadtype}=loadtype,
         #     {brandNameItem}=brandnameitem, 
-        #     {loadNums}=loadNums, 
+        #     {float(loadNums[0])}=loadNums, 
         #     {float(ratingsEV[0])}=ratingsEV, 
         #     {float(ratingsIA[0])}=ratingsIA, 
         #     {float(ratingsPW[0])}=ratingsPW, 
@@ -419,24 +419,24 @@ def uploadrecords():
         #     {loaddate}=dateDate 
               ''')
 
-        # monitorLoadController = MonitorLoad(
-        #     loadUUID=loadUUID,
-        #     roomUUID=roomUUID,
-        #     deptUUID=deptUUID,
-        #     department= department,
-        #     room=room, 
-        #     item=item, 
-        #     loadtype=loadtype,
-        #     brandNameItem=brandnameitem, 
-        #     loadNums=loadNums, 
-        #     ratingsEV=ratingsEV, 
-        #     ratingsIA=ratingsIA, 
-        #     ratingsPW=ratingsPW, 
-        #     actualPW=actualPW, 
-        #     usageFactor=usageFactor,
-        #     loaddate=dateDate
-        # )
-        #         # add records
-        # monitorLoadController.loadInfoInput()  
+        monitorLoadController = MonitorLoad(
+            loadUUID=loadUUID,
+            roomUUID=roomUUID,
+            deptUUID=deptUUID,
+            department= department,
+            room=room, 
+            item=item, 
+            loadtype=loadtype,
+            brandNameItem=brandNameItem, 
+            loadNums=float(loadNums[0]), 
+            ratingsEV=float(ratingsEV[0]), 
+            ratingsIA=float(ratingsIA[0]), 
+            ratingsPW=float(ratingsPW[0]), 
+            actualPW=float(actualPW[0]), 
+            usageFactor=float(usageFactor[0]),
+            loaddate=loaddate
+        )
+        # add records
+        monitorLoadController.loadInfoInput()  
 
-    return 'File uploaded successfully'
+    return jsonify({'message':'File uploaded successfully'})
