@@ -85,7 +85,8 @@ class MonitorLoad:
         loadReqsDatabase = Load.query.all()
         for loadReq in loadReqsDatabase:
 
-            totalRating += (float(loadReq.ratingspw) * float(loadReq.loadnums))
+            totalRating += (((float(loadReq.ratingspw) * float(loadReq.loadnums)) * float(loadReq.usagefactor)) * 4)
+        # CONNECTED_LOAD_COE = totalRating
         return totalRating
     
     def totalSolarGenerate(self):
@@ -151,7 +152,7 @@ class MonitorLoad:
                 if convertStringToDatetime.year == currDate:
                     month = convertStringToDatetime.date().strftime('%B')
 
-                    loadInMonth[month] = loadInMonth[month] + (float(load.ratingspw) * float(load.loadnums))
+                    loadInMonth[month] = loadInMonth[month] + (((float(load.ratingspw) * float(load.loadnums)) * float(load.usagefactor)) * 4)
             
 
             roomDataList = list(loadInMonth.values())
@@ -199,7 +200,7 @@ class MonitorLoad:
                 roomCounterList = []
                 for totalSumLoad in totalRoomSumLoad.loadkeyf:
                     loadCounter = 0.0
-                    loadCounter += totalSumLoad.ratingspw
+                    loadCounter += (((float(totalSumLoad.ratingspw) * float(totalSumLoad.loadnums)) * float(totalSumLoad.usagefactor))*4)
                     roomCounterList.append(loadCounter)
                 sumRoomCounterList = sum(roomCounterList)
                 deptCounterList.append(sumRoomCounterList)
