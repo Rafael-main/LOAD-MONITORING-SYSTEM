@@ -439,4 +439,4 @@ def uploadrecords():
         # add records
         monitorLoadController.loadInfoInput()  
 
-    return jsonify({'message':'File uploaded successfully'})
+    return jsonify({'message':'File uploaded successfully', 'status': 'ok'})

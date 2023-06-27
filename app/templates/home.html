@@ -549,7 +549,7 @@
             $(tableBody).empty();
             var tableData = data['data']['database_table']
             $.each(tableData, function(index, itemData) {
-            totalPowerLoss += (parseFloat(itemData.ratingsPW) * parseFloat(itemData.loadNums))
+            totalPowerLoss += (((parseFloat(itemData.ratingsPW) * parseFloat(itemData.loadNums)) * itemData.usageFactor) * 4)
             var row = $('<tr>').appendTo(tableBody);
             $('<td>').text(itemData.deptName).appendTo(row);
             $('<td>').text(itemData.roomName).appendTo(row);
@@ -660,7 +660,8 @@
             var tableData = data['data']['database_table']
             $.each(tableData, function(index, itemData) {
             
-            totalPowerLoss += itemData.ratingsPW
+            // totalPowerLoss += itemData.ratingsPW
+            totalPowerLoss += (((parseFloat(itemData.ratingsPW) * parseFloat(itemData.loadNums)) * itemData.usageFactor) * 4)
   
             var row = $('<tr>').appendTo(tableBody);
             $('<td>').text(itemData.deptName).appendTo(row);
@@ -1040,6 +1041,7 @@
 
 
     $('#uploadButton').click(function() {
+      var currYear = $('#change-year').val()
       var fileInput = document.getElementById('csvFileInput');
       var file = fileInput.files[0];
       var formData = new FormData();
